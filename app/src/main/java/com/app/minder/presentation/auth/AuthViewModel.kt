@@ -45,14 +45,14 @@ class AuthViewModel(
         }
     }
 
-    fun register(email:String, name:String, password: String) {
+    fun register(email:String, name:String, password: String, passwordConfirm: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
             )
 
-            registerUseCase(email, name, password)
+            registerUseCase(email, name, password, passwordConfirm)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,

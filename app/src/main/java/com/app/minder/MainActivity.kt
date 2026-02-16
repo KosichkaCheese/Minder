@@ -16,7 +16,7 @@ import com.app.minder.domain.usecase.RegisterUseCase
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
-import com.app.minder.ui.theme.MedTheme
+import com.app.minder.presentation.theme.MedTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
