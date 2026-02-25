@@ -7,7 +7,7 @@ import java.util.UUID
 @Entity(tableName = "measurement_types")
 data class MeasurementTypeEntity (
     @PrimaryKey
-    val id: String = UUID.randomUUID().toString(),
+    val id: String,
     val name: String,
     val unit: String,
     val lowerBound: Double?,
