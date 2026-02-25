@@ -2,7 +2,6 @@ package com.app.minder.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
@@ -22,5 +21,7 @@ data class ProfileEntity(
     val id: String = UUID.randomUUID().toString(),
     val userId: String,
     val name: String,
+    val isDefault: Boolean = false,
+    val isCurrent: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
