@@ -60,6 +60,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.2.0")
+    // bcrypt для паролей
+    implementation("org.mindrot:jbcrypt:0.4")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

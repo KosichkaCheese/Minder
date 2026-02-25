@@ -9,6 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.app.minder.data.local.database.MedDB
+import com.app.minder.data.repository.AuthRepImpl
 //import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepMock
 import com.app.minder.domain.usecase.LoginUseCase
@@ -24,8 +26,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val database = MedDB.getDB(applicationContext)
-        val authRepository = AuthRepMock()
+        val database = MedDB.getDB(applicationContext)
+        val authRepository = AuthRepImpl(
+            database.userDao(),
+            database.profileDao(),
+            database,
+            applicationContext
+        )
         val loginUseCase = LoginUseCase(authRepository)
         val registerUseCase = RegisterUseCase(authRepository)
 
