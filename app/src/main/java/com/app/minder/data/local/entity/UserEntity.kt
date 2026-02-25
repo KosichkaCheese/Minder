@@ -11,6 +11,7 @@ data class UserEntity(
     val id: String,
     val name: String,
     val email: String,
+    val password: String, //временно для клиента
     val createdAt: Long,
     val isCurrent: Boolean = false
 )
@@ -24,12 +25,12 @@ fun UserEntity.toDomain(): User {
     )
 }
 
-fun User.toEntity(isCurrent: Boolean = false): UserEntity {
-    return UserEntity(
-        id = id,
-        name = name,
-        email = email,
-        createdAt = createdAt,
-        isCurrent = isCurrent
-    )
-}
+//fun User.toEntity(isCurrent: Boolean = false): UserEntity {
+//    return UserEntity(
+//        id = id,
+//        name = name,
+//        email = email,
+//        createdAt = createdAt,
+//        isCurrent = isCurrent
+//    )
+//}

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.app.minder.data.local.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +22,12 @@ interface UserDao {
     @Query("UPDATE users SET isCurrent = 0")
     suspend fun clearCurrentUser()
 
+    @Update
+    suspend fun updateUser(user: UserEntity)
+
     @Query("DELETE FROM users")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM users where email=:email")
+    suspend fun getUserByEmail(email: String): UserEntity?
 }
