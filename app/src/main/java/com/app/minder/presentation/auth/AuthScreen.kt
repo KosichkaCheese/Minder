@@ -55,6 +55,7 @@ fun AuthScreen(
                 MTextField(
                     value = name,
                     onValueChange = { name = it },
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                     label = "Имя пользователя",
                     showClearButton = true,
                     supportingText = "Это имя будут видеть другие пользователи",

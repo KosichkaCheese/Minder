@@ -28,7 +28,7 @@ fun MTextField(
     label: String,
     modifier: Modifier = Modifier
         .fillMaxWidth()
-        .height(56.dp),
+        .height(60.dp),
     showClearButton: Boolean = true,
     supportingText: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -70,6 +70,8 @@ fun MTextField(
             focusedSupportingTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedContainerColor = MaterialTheme.colorScheme.background,
             focusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         ),
         singleLine = true
     )
