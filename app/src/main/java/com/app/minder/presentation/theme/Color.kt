@@ -10,3 +10,7 @@ val ButtonNeutral = Color(0xFFC5BAA6)
 
 val OnContainer = Color(0xFF897E69)
 val OnContainerError = Color(0xFF904354)
+
+val Mint = Color(0xFFC2E2B8)
+
+val OnPrimary = Color(0xFF596334)

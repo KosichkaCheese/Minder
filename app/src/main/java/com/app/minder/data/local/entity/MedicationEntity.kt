@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.Timing
 import com.app.minder.domain.model.Unit
 import java.util.UUID
@@ -29,4 +30,17 @@ data class MedicationEntity(
     val timing: Timing,
     val stock: Double,
     val createdAt: Long = System.currentTimeMillis()
+)
+
+fun MedicationEntity.toDomain(): Medication{
+    return Medication(
+        id = id,
+        profileId = profileId,
+        name = name,
+        dosage = dosage,
+        unit = unit,
+        timing = timing,
+        stock = stock
     )
+
+}

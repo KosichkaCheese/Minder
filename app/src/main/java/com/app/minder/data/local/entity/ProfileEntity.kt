@@ -3,6 +3,7 @@ package com.app.minder.data.local.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.Profile
 import java.util.UUID
 
 @Entity(
@@ -25,3 +26,13 @@ data class ProfileEntity(
     val isCurrent: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
+
+fun ProfileEntity.toDomain(): Profile {
+    return Profile(
+        id = id,
+        userId = userId,
+        name=name,
+        isDefault = isDefault,
+        isCurrent = isCurrent
+    )
+}

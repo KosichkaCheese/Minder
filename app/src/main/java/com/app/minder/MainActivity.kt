@@ -13,9 +13,13 @@ import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepImpl
 //import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepMock
+import com.app.minder.data.repository.MedicationRepImpl
+import com.app.minder.data.repository.ProfileRepImpl
+import com.app.minder.domain.usecase.GetTodayIntakesUseCase
 import com.app.minder.domain.usecase.LoginUseCase
 import com.app.minder.domain.usecase.RegisterUseCase
 import com.app.minder.presentation.auth.AuthViewModel
+import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
 import com.app.minder.presentation.theme.MedTheme
@@ -35,6 +39,15 @@ class MainActivity : ComponentActivity() {
         )
         val loginUseCase = LoginUseCase(authRepository)
         val registerUseCase = RegisterUseCase(authRepository)
+        val medicationRepository = MedicationRepImpl(
+            medicationDao = database.medicationDao(),
+            scheduleDao = database.medicationScheduleDao(),
+            intakeDao = database.medicationIntakeDao()
+        )
+        val profileRepository = ProfileRepImpl(
+            profileDao = database.profileDao()
+        )
+        val getTodayIntakesUseCase = GetTodayIntakesUseCase(medicationRepository, profileRepository)
 
         setContent {
             MedTheme {
@@ -59,10 +72,12 @@ class MainActivity : ComponentActivity() {
 
                     startDestination?.let { destination ->
                         val authViewModel = AuthViewModel(loginUseCase, registerUseCase)
+                        val homeViewModel = HomeViewModel(getTodayIntakesUseCase)
 
                         NavGraph(
                             navController = navController,
                             authViewModel = authViewModel,
+                            homeViewModel = homeViewModel,
                             startDestination = destination
                         )
                     }

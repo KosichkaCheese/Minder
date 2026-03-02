@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
         MedicationIntakeEntity::class,
         MeasurementTypeEntity::class,
         MeasurementGoalEntity::class,
-        MeasurementEntity::class,
+        MeasurementEntity::class
        ],
     version = 1,
     exportSchema = false
@@ -34,6 +34,9 @@ abstract class MedDB : RoomDatabase(){
     abstract fun userDao(): UserDao
     abstract fun profileDao(): ProfileDao
     abstract fun measurementTypeDao(): MeasurementTypeDao
+    abstract fun medicationDao(): MedicationDao
+    abstract fun medicationIntakeDao(): MedicationIntakeDao
+    abstract fun medicationScheduleDao(): MedicationScheduleDao
 
     companion object{
         @Volatile

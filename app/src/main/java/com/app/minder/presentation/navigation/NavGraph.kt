@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
+import com.app.minder.presentation.home.HomeScreen
+import com.app.minder.presentation.home.HomeViewModel
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")
@@ -16,6 +18,7 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
+    homeViewModel: HomeViewModel,
     startDestination: String
 ) {
     NavHost(
@@ -34,8 +37,9 @@ fun NavGraph(
         }
 
         composable(Screen.Home.route) {
-            // Временный заглушка
-            androidx.compose.material3.Text("Home Screen - TODO")
+            HomeScreen(
+                viewModel = homeViewModel
+            )
         }
     }
 }
