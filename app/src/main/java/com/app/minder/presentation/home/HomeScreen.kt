@@ -1,6 +1,5 @@
 package com.app.minder.presentation.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.app.minder.domain.model.IntakeStatus
 import com.app.minder.domain.model.TodayIntake
 import com.app.minder.presentation.components.MSurface
+import com.app.minder.presentation.theme.Mint
 
 @Composable
 fun HomeScreen(
@@ -56,7 +55,7 @@ fun HomeScreen(
                 CircularProgressIndicator(
                     progress = { uiState.progressPercent / 100f },
                     modifier = Modifier.size(205.dp),
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = Mint,
                     trackColor = MaterialTheme.colorScheme.surfaceContainer,
                     strokeWidth = 20.dp
                 )
@@ -87,6 +86,7 @@ fun HomeScreen(
                 )
             } else {
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(uiState.intakes) { intake ->

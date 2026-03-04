@@ -1,0 +1,185 @@
+package com.app.minder.presentation.main
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.app.minder.presentation.home.HomeViewModel
+import com.app.minder.presentation.navigation.bottomNavItems
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.app.minder.presentation.home.HomeScreen
+import com.app.minder.presentation.navigation.Screen
+import com.app.minder.presentation.theme.Mint
+import com.app.minder.presentation.theme.NavBar
+import com.app.minder.presentation.theme.onMint
+import com.app.minder.presentation.theme.onTertiaryVariant
+import kotlin.math.exp
+
+@Composable
+fun MainScreen(
+    homeViewModel: HomeViewModel
+) {
+    val navController = rememberNavController()
+    var isFabExpanded by remember{mutableStateOf(false)}
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar(
+                containerColor = NavBar,
+                modifier = Modifier.height(85.dp)
+            ){
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+
+                bottomNavItems.forEach { item ->
+                    val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+
+                    NavigationBarItem(
+                        icon = { Icon(
+                            if (isSelected) item.active else item.inactive,
+                            contentDescription = item.label,
+                            modifier = Modifier.size(35.dp)
+                        ) },
+                        selected = isSelected,
+                        onClick = {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = Color.Transparent,
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
+            }
+        },
+
+        floatingActionButton = {
+            val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+            if (currentRoute == Screen.Home.route) {
+                FloatingActionButtonMenu(
+                    expanded = isFabExpanded,
+                    onExpandChange = {isFabExpanded = it},
+                    onMedListClick = {
+                        navController.navigate(Screen.MedicationList.route)
+                        isFabExpanded = false
+                    },
+                    onAddMedClick = {
+                        navController.navigate(Screen.AddMedication.route)
+                        isFabExpanded = false
+                    }
+                )
+            }
+        }
+    ) {
+        innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.Home.route) {
+                HomeScreen(viewModel = homeViewModel)
+            }
+
+            composable(Screen.Metrics.route) {
+                Text("Показатели - TODO")
+            }
+
+            composable(Screen.Profiles.route) {
+                Text("Профили - TODO")
+            }
+
+            composable(Screen.MedicationList.route) {
+                Text("Список лекарств - TODO")
+            }
+
+            composable(Screen.AddMedication.route) {
+                Text("Добавить лекарство - TODO")
+            }
+        }
+    }
+}
+
+@Composable
+fun FloatingActionButtonMenu(
+    expanded: Boolean,
+    onExpandChange: (Boolean) -> Unit,
+    onMedListClick: () -> Unit,
+    onAddMedClick: () -> Unit
+){
+    Column(
+        horizontalAlignment = Alignment.End
+    ) {
+        if (expanded){
+            SmallFloatingActionButton(
+                onClick = onMedListClick,
+                containerColor = Mint,
+                contentColor = onMint,
+                elevation = FloatingActionButtonDefaults.elevation(1.dp, 0.dp),
+                shape = RoundedCornerShape(30.dp),
+                modifier = Modifier.padding(0.dp, 4.dp)
+            ) {
+                Text(
+                    text = "Список лекарств",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            SmallFloatingActionButton(
+                onClick = onAddMedClick,
+                containerColor = Mint,
+                contentColor = onMint,
+                elevation = FloatingActionButtonDefaults.elevation(1.dp, 0.dp),
+                shape = RoundedCornerShape(30.dp),
+                modifier = Modifier.padding(0.dp, 4.dp)
+            ) {
+                Text(
+                    text="Добавить",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+
+        FloatingActionButton(
+            onClick = {onExpandChange(!expanded)},
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = onTertiaryVariant,
+            elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
+            shape = CircleShape
+        ) {
+            Icon(
+                imageVector = if (expanded) Icons.Default.Close else Icons.Default.Menu,
+                contentDescription = if (expanded) "Закрыть" else "Меню"
+            )
+        }
+    }
+}

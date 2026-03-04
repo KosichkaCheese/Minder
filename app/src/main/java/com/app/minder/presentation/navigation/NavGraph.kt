@@ -6,13 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
-import com.app.minder.presentation.home.HomeScreen
 import com.app.minder.presentation.home.HomeViewModel
-
-sealed class Screen(val route: String) {
-    object Auth : Screen("auth")
-    object Home : Screen("home")
-}
+import com.app.minder.presentation.main.MainScreen
 
 @Composable
 fun NavGraph(
@@ -37,8 +32,8 @@ fun NavGraph(
         }
 
         composable(Screen.Home.route) {
-            HomeScreen(
-                viewModel = homeViewModel
+            MainScreen(
+                homeViewModel = homeViewModel
             )
         }
     }

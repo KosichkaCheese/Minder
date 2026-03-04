@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepImpl
-//import com.app.minder.data.local.database.MedDB
-import com.app.minder.data.repository.AuthRepMock
 import com.app.minder.data.repository.MedicationRepImpl
 import com.app.minder.data.repository.ProfileRepImpl
 import com.app.minder.domain.usecase.GetTodayIntakesUseCase
