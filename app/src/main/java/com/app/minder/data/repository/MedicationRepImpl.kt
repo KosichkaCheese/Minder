@@ -4,10 +4,12 @@ import com.app.minder.data.local.dao.MedicationDao
 import com.app.minder.data.local.dao.MedicationIntakeDao
 import com.app.minder.data.local.dao.MedicationScheduleDao
 import com.app.minder.data.local.entity.toDomain
+import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.TodayIntake
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.util.Calendar
 
 class MedicationRepImpl(
@@ -57,5 +59,11 @@ class MedicationRepImpl(
             }
             result.sortedBy { it.timeMinutes }
         }
+    }
+
+    override fun getMedicationList(profileId: String): Flow<List<Medication>> {
+        val medicationEntities = medicationDao.getMedicationsByProfile(profileId)
+        val medications = medicationEntities.map{ entities -> entities.map{it.toDomain()}}
+        return medications
     }
 }

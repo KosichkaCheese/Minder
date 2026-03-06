@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -17,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -29,54 +29,68 @@ import com.app.minder.presentation.navigation.bottomNavItems
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.app.minder.presentation.home.HomeScreen
+import com.app.minder.presentation.medList.MedListScreen
+import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.theme.Mint
 import com.app.minder.presentation.theme.NavBar
 import com.app.minder.presentation.theme.onMint
 import com.app.minder.presentation.theme.onTertiaryVariant
-import kotlin.math.exp
 
 @Composable
 fun MainScreen(
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    medListViewModel: MedListViewModel
 ) {
     val navController = rememberNavController()
     var isFabExpanded by remember{mutableStateOf(false)}
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val screensWithBottomBar = listOf(
+        Screen.Home.route,
+        Screen.Metrics.route,
+        Screen.Profiles.route
+    )
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = NavBar,
-                modifier = Modifier.height(85.dp)
-            ){
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+            if (currentRoute in screensWithBottomBar) {
+                NavigationBar(
+                    containerColor = NavBar,
+                    modifier = Modifier.height(85.dp)
+                ) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
-                bottomNavItems.forEach { item ->
-                    val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+                    bottomNavItems.forEach { item ->
+                        val isSelected =
+                            currentDestination?.hierarchy?.any { it.route == item.route } == true
 
-                    NavigationBarItem(
-                        icon = { Icon(
-                            if (isSelected) item.active else item.inactive,
-                            contentDescription = item.label,
-                            modifier = Modifier.size(35.dp)
-                        ) },
-                        selected = isSelected,
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    if (isSelected) item.active else item.inactive,
+                                    contentDescription = item.label,
+                                    modifier = Modifier.size(35.dp)
+                                )
+                            },
+                            selected = isSelected,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            indicatorColor = Color.Transparent,
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onPrimary
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                indicatorColor = Color.Transparent,
+                                selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         )
-                    )
+                    }
                 }
             }
         },
@@ -96,6 +110,19 @@ fun MainScreen(
                         isFabExpanded = false
                     }
                 )
+            } else if (currentRoute== Screen.MedicationList.route){
+                FloatingActionButton(
+                    onClick = {navController.navigate(Screen.AddMedication.route)},
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = onTertiaryVariant,
+                    elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Добавить"
+                    )
+                }
             }
         }
     ) {
@@ -118,7 +145,9 @@ fun MainScreen(
             }
 
             composable(Screen.MedicationList.route) {
-                Text("Список лекарств - TODO")
+                MedListScreen(
+                    viewModel = medListViewModel,
+                    onBack = { navController.popBackStack() })
             }
 
             composable(Screen.AddMedication.route) {

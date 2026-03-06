@@ -8,12 +8,14 @@ import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.main.MainScreen
+import com.app.minder.presentation.medList.MedListViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
+    medListViewModel: MedListViewModel,
     startDestination: String
 ) {
     NavHost(
@@ -33,7 +35,8 @@ fun NavGraph(
 
         composable(Screen.Home.route) {
             MainScreen(
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                medListViewModel = medListViewModel
             )
         }
     }
