@@ -1,12 +1,12 @@
 package com.app.minder.data.local.converters
 
 import androidx.room.TypeConverter
-import com.app.minder.domain.model.Unit
+import com.app.minder.domain.model.MeasurementUnit
 
 class UnitConverter {
     @TypeConverter
-    fun fromUnit (unit: Unit): String = unit.name
+    fun fromUnit (unit: MeasurementUnit): String = unit.name
 
     @TypeConverter
-    fun toUnit (value: String): Unit = Unit.valueOf(value)
+    fun toUnit (value: String): MeasurementUnit = MeasurementUnit.valueOf(value)
 }

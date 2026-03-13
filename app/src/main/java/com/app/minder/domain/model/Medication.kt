@@ -5,7 +5,7 @@ data class Medication(
     val profileId: String,
     val name: String,
     val dosage: Double,
-    val unit: Unit,
+    val unit: MeasurementUnit,
     val timing: Timing,
     val stock: Double,
 )

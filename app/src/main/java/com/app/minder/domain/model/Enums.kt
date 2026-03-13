@@ -1,6 +1,9 @@
 package com.app.minder.domain.model
 
-enum class Unit(val displayName: String) {
+import androidx.annotation.DrawableRes
+import com.app.minder.R
+
+enum class MeasurementUnit(val displayName: String) {
     PILL("таб"),
     PIECE("шт"),
     MG("мг"),
@@ -11,9 +14,9 @@ enum class Unit(val displayName: String) {
     TEASPOON("ч.л.")
 }
 
-enum class Timing(val dasplayName: String){
-    BEFORE("до еды"),
-    DURING("во время еды"),
-    AFTER("после еды"),
-    ANY("не зависит от еды")
+enum class Timing(val displayName: String, @DrawableRes val iconRes: Int){
+    BEFORE("до еды", R.drawable.before),
+    DURING("во время еды", R.drawable.during),
+    AFTER("после еды", R.drawable.after),
+    ANY("не зависит от еды", R.drawable.any)
 }

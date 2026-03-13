@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.MeasurementUnit
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.Timing
-import com.app.minder.domain.model.Unit
 import java.util.UUID
 
 @Entity(
@@ -26,7 +26,7 @@ data class MedicationEntity(
     val profileId: String,
     val name: String,
     val dosage: Double,
-    val unit: Unit,
+    val unit: MeasurementUnit,
     val timing: Timing,
     val stock: Double,
     val createdAt: Long = System.currentTimeMillis()

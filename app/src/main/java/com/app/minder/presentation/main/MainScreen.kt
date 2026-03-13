@@ -22,13 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.navigation.bottomNavItems
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.app.minder.presentation.home.HomeScreen
+import com.app.minder.presentation.medDetail.MedDetailScreen
+import com.app.minder.presentation.medDetail.MedScreenMode
 import com.app.minder.presentation.medList.MedListScreen
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
@@ -106,13 +110,13 @@ fun MainScreen(
                         isFabExpanded = false
                     },
                     onAddMedClick = {
-                        navController.navigate(Screen.AddMedication.route)
+                        navController.navigate("medication_detail/new/create")
                         isFabExpanded = false
                     }
                 )
             } else if (currentRoute== Screen.MedicationList.route){
                 FloatingActionButton(
-                    onClick = {navController.navigate(Screen.AddMedication.route)},
+                    onClick = {navController.navigate("medication_detail/new/create")},
                     containerColor = MaterialTheme.colorScheme.tertiary,
                     contentColor = onTertiaryVariant,
                     elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
@@ -150,8 +154,21 @@ fun MainScreen(
                     onBack = { navController.popBackStack() })
             }
 
-            composable(Screen.AddMedication.route) {
-                Text("Добавить лекарство - TODO")
+            composable(
+                route = Screen.MedDetail.route,
+                arguments = listOf(
+                    navArgument("id") { type = NavType.StringType },
+                    navArgument("mode") { type = NavType.StringType }
+                )
+            ) {
+                val id = it.arguments?.getString("id")?.takeIf { it != "new" }
+                val modeStr = it.arguments?.getString("mode") ?: "view"
+                val mode = MedScreenMode.valueOf(modeStr.uppercase())
+
+                MedDetailScreen(
+                    mode = mode,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
@@ -212,3 +229,4 @@ fun FloatingActionButtonMenu(
         }
     }
 }
+

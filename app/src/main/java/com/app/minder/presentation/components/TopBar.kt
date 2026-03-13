@@ -19,7 +19,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(top=16.dp, bottom = 8.dp, start=8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
@@ -31,7 +31,7 @@ fun TopBar(
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Назад",
-                modifier = Modifier.size(35.dp)
+                modifier = Modifier.size(45.dp)
             )
         }
     }

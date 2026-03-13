@@ -25,14 +25,15 @@ import androidx.compose.ui.unit.sp
 fun MTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String = "",
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(60.dp),
     showClearButton: Boolean = true,
     supportingText: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    singleLine: Boolean = true
 ) {
     OutlinedTextField(
         value = value,
@@ -73,6 +74,6 @@ fun MTextField(
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         ),
-        singleLine = true
+        singleLine = singleLine
     )
 }
