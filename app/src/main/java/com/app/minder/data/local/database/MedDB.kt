@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.app.minder.data.local.converters.TimingConverter
 import com.app.minder.data.local.converters.UnitConverter
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
         MeasurementGoalEntity::class,
         MeasurementEntity::class
        ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 
@@ -42,6 +43,12 @@ abstract class MedDB : RoomDatabase(){
         @Volatile
         private var INSTANCE: MedDB? = null
 
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE medications ADD COLUMN note TEXT DEFAULT ''")
+            }
+        }
+
         fun getDB(context: Context): MedDB {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -49,7 +56,8 @@ abstract class MedDB : RoomDatabase(){
                     MedDB::class.java,
                     "med_database"
                 )
-//                    .fallbackToDestructiveMigration(true)
+
+                    .addMigrations(MIGRATION_1_2)
                     .addCallback(object : Callback(){
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)

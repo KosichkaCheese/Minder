@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.MedicationSchedule
 import java.util.Calendar
 import java.util.UUID
 
@@ -25,6 +26,24 @@ data class MedicationScheduleEntity (
     val dayOfWeek: Int?,
     val timeMinutes: Int
 )
+
+fun MedicationScheduleEntity.toDomain(): MedicationSchedule {
+    return MedicationSchedule(
+        id = id,
+        medicationId = medicationId,
+        dayOfWeek = dayOfWeek,
+        timeMinutes = timeMinutes
+    )
+}
+
+fun MedicationSchedule.toEntity(): MedicationScheduleEntity {
+    return MedicationScheduleEntity(
+        id = id,
+        medicationId = medicationId,
+        dayOfWeek = dayOfWeek,
+        timeMinutes = timeMinutes
+    )
+}
 
 fun String.toMinutes(): Int {
     val (hours, minutes) = split(":").map { it.toInt() }

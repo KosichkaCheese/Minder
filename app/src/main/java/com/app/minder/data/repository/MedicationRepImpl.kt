@@ -1,10 +1,16 @@
 package com.app.minder.data.repository
 
+import androidx.room.withTransaction
 import com.app.minder.data.local.dao.MedicationDao
 import com.app.minder.data.local.dao.MedicationIntakeDao
 import com.app.minder.data.local.dao.MedicationScheduleDao
+import com.app.minder.data.local.database.MedDB
+import com.app.minder.data.local.entity.MedicationEntity
+import com.app.minder.data.local.entity.MedicationIntakeEntity
 import com.app.minder.data.local.entity.toDomain
+import com.app.minder.data.local.entity.toEntity
 import com.app.minder.domain.model.Medication
+import com.app.minder.domain.model.MedicationSchedule
 import com.app.minder.domain.model.TodayIntake
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -15,7 +21,8 @@ import java.util.Calendar
 class MedicationRepImpl(
     private val medicationDao: MedicationDao,
     private val scheduleDao: MedicationScheduleDao,
-    private val intakeDao: MedicationIntakeDao
+    private val intakeDao: MedicationIntakeDao,
+    private val database: MedDB
 ) : MedicationRepository {
     override fun getTodayIntakes(profileId: String): Flow<List<TodayIntake>> {
         val calendar = Calendar.getInstance()
@@ -66,4 +73,43 @@ class MedicationRepImpl(
         val medications = medicationEntities.map{ entities -> entities.map{it.toDomain()}}
         return medications
     }
+
+    override fun getMedicationById(id: String): Flow<Medication?> {
+        val medication = medicationDao.getMedicationById(id).map {it?.toDomain()}
+        return medication
+    }
+
+    override fun getScheduleByMedication(medicationId: String): Flow<List<MedicationSchedule>> {
+        val schedules = scheduleDao.getScheduleByMedication(medicationId)
+            .map { schedule -> schedule.map { it.toDomain() } }
+        return schedules
+    }
+
+    override suspend fun deleteMedication(id: String) {
+        medicationDao.deleteMedication(id)
+    }
+
+    override suspend fun saveMedication(
+        medication: Medication,
+        schedules: List<MedicationSchedule>
+    ) {
+        database.withTransaction {
+            medicationDao.insertMedication(medication.toEntity())
+
+            scheduleDao.deleteByMedication(medication.id)
+
+            schedules.forEach { schedule ->
+                scheduleDao.insertMedicationSchedule(schedule.toEntity())
+            }
+        }
+    }
+
+    override suspend fun takeMedication(medicationId: String) {
+        intakeDao.insertMedicationIntake(
+            MedicationIntakeEntity(
+                medicationId = medicationId
+            )
+        )
+    }
+
 }

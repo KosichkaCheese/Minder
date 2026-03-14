@@ -30,8 +30,13 @@ import com.app.minder.presentation.navigation.bottomNavItems
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.domain.usecase.DeleteMedUseCase
+import com.app.minder.domain.usecase.GetCurrentProfileUseCase
+import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.presentation.home.HomeScreen
 import com.app.minder.presentation.medDetail.MedDetailScreen
+import com.app.minder.presentation.medDetail.MedDetailViewModel
 import com.app.minder.presentation.medDetail.MedScreenMode
 import com.app.minder.presentation.medList.MedListScreen
 import com.app.minder.presentation.medList.MedListViewModel
@@ -44,7 +49,11 @@ import com.app.minder.presentation.theme.onTertiaryVariant
 @Composable
 fun MainScreen(
     homeViewModel: HomeViewModel,
-    medListViewModel: MedListViewModel
+    medListViewModel: MedListViewModel,
+    saveMedicationUseCase: SaveMedUseCase,
+    deleteMedicationUseCase: DeleteMedUseCase,
+    getCurrentProfileUseCase: GetCurrentProfileUseCase,
+    medicationRep: MedicationRepository
 ) {
     val navController = rememberNavController()
     var isFabExpanded by remember{mutableStateOf(false)}
@@ -160,14 +169,25 @@ fun MainScreen(
                     navArgument("id") { type = NavType.StringType },
                     navArgument("mode") { type = NavType.StringType }
                 )
-            ) {
-                val id = it.arguments?.getString("id")?.takeIf { it != "new" }
-                val modeStr = it.arguments?.getString("mode") ?: "view"
+            ) { backStackEntry ->
+                val medicationId = backStackEntry.arguments?.getString("id")?.takeIf { it != "new" }
+                val modeStr = backStackEntry.arguments?.getString("mode") ?: "view"
                 val mode = MedScreenMode.valueOf(modeStr.uppercase())
+
+                val viewModel = remember(medicationId) {
+                    MedDetailViewModel(
+                        medicationId = medicationId,
+                        saveMedicationUseCase = saveMedicationUseCase,
+                        deleteMedicationUseCase = deleteMedicationUseCase,
+                        getCurrentProfileUseCase = getCurrentProfileUseCase,
+                        medicationRep = medicationRep
+                    )
+                }
 
                 MedDetailScreen(
                     mode = mode,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    viewModel = viewModel
                 )
             }
         }

@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.domain.usecase.DeleteMedUseCase
+import com.app.minder.domain.usecase.GetCurrentProfileUseCase
+import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
@@ -16,6 +20,10 @@ fun NavGraph(
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     medListViewModel: MedListViewModel,
+    saveMedicationUseCase: SaveMedUseCase,
+    deleteMedicationUseCase: DeleteMedUseCase,
+    getCurrentProfileUseCase: GetCurrentProfileUseCase,
+    medicationRep: MedicationRepository,
     startDestination: String
 ) {
     NavHost(
@@ -36,7 +44,11 @@ fun NavGraph(
         composable(Screen.Home.route) {
             MainScreen(
                 homeViewModel = homeViewModel,
-                medListViewModel = medListViewModel
+                medListViewModel = medListViewModel,
+                saveMedicationUseCase = saveMedicationUseCase,
+                deleteMedicationUseCase = deleteMedicationUseCase,
+                getCurrentProfileUseCase = getCurrentProfileUseCase,
+                medicationRep = medicationRep
             )
         }
     }

@@ -39,6 +39,8 @@ import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,12 +74,14 @@ enum class MedScreenMode {
 @Composable
 fun MedDetailScreen(
     mode: MedScreenMode,
+    viewModel: MedDetailViewModel,
     onBack: () -> Unit,
-    onSave: () -> Unit = {},
-    onDelete: () -> Unit = {},
     onTake: () -> Unit = {},
     onSkip: () -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val currentProfile =uiState.currentProfile
+
     var name by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf("") }
@@ -89,6 +93,31 @@ fun MedDetailScreen(
     var selectedTimes by remember { mutableStateOf(emptyList<String>()) }
     var editTimeIndex by remember {mutableStateOf<Int?>(null)}
     var showTimePickerDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.medication) {
+        uiState.medication?.let { med ->
+            name = med.name
+            dosage = med.dosage.toString()
+            stock = med.stock.toString()
+            selectedUnit = med.unit
+            selectedTiming = med.timing
+            note = med.note ?: ""
+        }
+    }
+
+    LaunchedEffect(uiState.schedules) {
+        if (uiState.schedules.isNotEmpty()) {
+            val days = uiState.schedules.mapNotNull { it.dayOfWeek }.toSet()
+            val times = uiState.schedules.map { schedule ->
+                val hours = schedule.timeMinutes / 60
+                val minutes = schedule.timeMinutes % 60
+                String.format("%02d:%02d", hours, minutes)
+            }.distinct()
+
+            selectedDays = days
+            selectedTimes = times
+        }
+    }
 
     val isEditable = mode == MedScreenMode.CREATE || mode == MedScreenMode.EDIT
 
@@ -443,7 +472,10 @@ fun MedDetailScreen(
                                     disabledContainerColor = Color.Transparent,
                                     disabledContentColor = MaterialTheme.colorScheme.error
                                 ),
-                                onClick = onDelete
+                                onClick = {
+                                    viewModel.deleteMedication()
+                                    onBack()
+                                }
                             ){
                                 Icon(
                                     Icons.Default.Delete,
@@ -490,7 +522,21 @@ fun MedDetailScreen(
                             )
                             MButton(
                                 text = "Сохранить",
-                                onClick = onSave,
+                                onClick = {
+                                    currentProfile?.let{ profile ->
+                                        viewModel.saveMedication(
+                                            name = name,
+                                            dosage = dosage.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                                            unit = selectedUnit,
+                                            stock = stock.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                                            note = note,
+                                            timing = selectedTiming,
+                                            selectedDays = selectedDays,
+                                            selectedTimes = selectedTimes
+                                        )
+                                        onBack()
+                                    }
+                                },
                                 containerColor = onMint,
                                 contentColor =PrimarySurface
                             )
@@ -505,7 +551,21 @@ fun MedDetailScreen(
                             )
                             MButton(
                                 text = "Сохранить",
-                                onClick = onSave,
+                                onClick = {
+                                    currentProfile?.let{ profile ->
+                                        viewModel.saveMedication(
+                                            name = name,
+                                            dosage = dosage.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                                            unit = selectedUnit,
+                                            stock = stock.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                                            note = note,
+                                            timing = selectedTiming,
+                                            selectedDays = selectedDays,
+                                            selectedTimes = selectedTimes
+                                        )
+                                        onBack()
+                                    }
+                                },
                                 containerColor = onMint,
                                 contentColor =PrimarySurface
                             )
@@ -531,6 +591,14 @@ fun MedDetailScreen(
                 }
                 showTimePickerDialog = false
             }
+        )
+    }
+
+    uiState.error?.let { error ->
+        Text(
+            text = error,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

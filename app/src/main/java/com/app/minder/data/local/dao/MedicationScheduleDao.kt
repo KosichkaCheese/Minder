@@ -21,4 +21,7 @@ interface MedicationScheduleDao {
         ORDER BY timeMinutes
         """)
     fun getTodaySchedules(dayOfWeek: Int): Flow<List<MedicationScheduleEntity>>
+
+    @Query("DELETE FROM medication_schedules WHERE medicationId=:medicationId")
+    suspend fun deleteByMedication(medicationId: String)
 }

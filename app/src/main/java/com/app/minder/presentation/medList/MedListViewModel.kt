@@ -23,6 +23,10 @@ class MedListViewModel(
     private val _uiState = MutableStateFlow(MedListUiState())
     val uiState: StateFlow<MedListUiState> = _uiState.asStateFlow()
 
+    init {
+        loadMedications()
+    }
+
     private fun loadMedications(){
         viewModelScope.launch{
             _uiState.value = _uiState.value.copy(

@@ -13,12 +13,16 @@ import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepImpl
 import com.app.minder.data.repository.MedicationRepImpl
 import com.app.minder.data.repository.ProfileRepImpl
+import com.app.minder.domain.usecase.DeleteMedUseCase
+import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.GetMedsUseCase
 import com.app.minder.domain.usecase.GetTodayIntakesUseCase
 import com.app.minder.domain.usecase.LoginUseCase
 import com.app.minder.domain.usecase.RegisterUseCase
+import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
+import com.app.minder.presentation.medDetail.MedDetailViewModel
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
@@ -42,13 +46,19 @@ class MainActivity : ComponentActivity() {
         val medicationRepository = MedicationRepImpl(
             medicationDao = database.medicationDao(),
             scheduleDao = database.medicationScheduleDao(),
-            intakeDao = database.medicationIntakeDao()
+            intakeDao = database.medicationIntakeDao(),
+            database = database
         )
         val profileRepository = ProfileRepImpl(
             profileDao = database.profileDao()
         )
+
         val getTodayIntakesUseCase = GetTodayIntakesUseCase(medicationRepository, profileRepository)
         val getMedsUseCase = GetMedsUseCase(medicationRepository, profileRepository)
+        val deleteMedUseCase = DeleteMedUseCase(medicationRepository)
+        val getCurrentProfileUseCase = GetCurrentProfileUseCase(profileRepository)
+        val saveMedUseCase = SaveMedUseCase(medicationRepository)
+
 
         setContent {
             MedTheme {
@@ -81,7 +91,11 @@ class MainActivity : ComponentActivity() {
                             authViewModel = authViewModel,
                             homeViewModel = homeViewModel,
                             medListViewModel = medListViewModel,
-                            startDestination = destination
+                            startDestination = destination,
+                            saveMedicationUseCase = saveMedUseCase,
+                            deleteMedicationUseCase = deleteMedUseCase,
+                            getCurrentProfileUseCase = getCurrentProfileUseCase,
+                            medicationRep = medicationRepository
                         )
                     }
                 }

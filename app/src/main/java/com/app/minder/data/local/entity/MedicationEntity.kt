@@ -29,6 +29,7 @@ data class MedicationEntity(
     val unit: MeasurementUnit,
     val timing: Timing,
     val stock: Double,
+    val note: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )
 
@@ -40,7 +41,20 @@ fun MedicationEntity.toDomain(): Medication{
         dosage = dosage,
         unit = unit,
         timing = timing,
-        stock = stock
+        stock = stock,
+        note = note
     )
+}
 
+fun Medication.toEntity(): MedicationEntity{
+    return MedicationEntity(
+        id = id,
+        profileId = profileId,
+        name = name,
+        dosage = dosage,
+        unit = unit,
+        timing = timing,
+        stock = stock,
+        note = note
+    )
 }

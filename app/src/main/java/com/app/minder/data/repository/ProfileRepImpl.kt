@@ -10,6 +10,6 @@ class ProfileRepImpl(
     val profileDao: ProfileDao
 ) : ProfileRepository {
     override fun getCurrentProfile(): Flow<Profile?> {
-        return profileDao.getCurrentProfile().map { it?.toDomain()}
+        return profileDao.getCurrentProfile().map {it?.toDomain()}
     }
 }

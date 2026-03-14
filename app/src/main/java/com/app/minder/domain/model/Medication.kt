@@ -8,4 +8,5 @@ data class Medication(
     val unit: MeasurementUnit,
     val timing: Timing,
     val stock: Double,
+    val note: String?,
 )
