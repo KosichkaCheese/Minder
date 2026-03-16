@@ -47,7 +47,7 @@ class HomeViewModel(
                     intakes ->
                     val takenCount = intakes.count { it.isTaken }
                     val totalCount = intakes.size
-                    val progress = if (totalCount>0) (takenCount/totalCount)*100 else 0
+                    val progress = if (totalCount>0) (takenCount*100/totalCount) else 0
 
                     _uiState.value = HomeUiState(
                         isLoading = false,
