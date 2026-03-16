@@ -168,4 +168,25 @@ class MedDetailViewModel(
 
         return schedules
     }
+
+    fun markAsTaken(onSuccess:()->Unit){
+        viewModelScope.launch {
+            if (medicationId!=null) {
+                try {
+                    medicationRep.takeMedication(medicationId)
+                    onSuccess()
+                } catch (e: Exception){
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Не удалось отметить прием: ${e.message}"
+                    )
+                }
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Не удалось отметить прием: id лекарства не найден"
+                )
+            }
+        }
+    }
 }

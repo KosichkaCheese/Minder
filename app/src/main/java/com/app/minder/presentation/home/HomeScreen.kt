@@ -1,5 +1,6 @@
 package com.app.minder.presentation.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,8 @@ import com.app.minder.presentation.theme.PrimarySurface
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onIntakeClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -93,7 +95,8 @@ fun HomeScreen(
                 ) {
                     items(uiState.intakes) { intake ->
                         IntakeCard(
-                            intake = intake
+                            intake = intake,
+                            onClick = {onIntakeClick(intake.medication.id)}
                         )
                     }
                 }
@@ -104,10 +107,17 @@ fun HomeScreen(
 
 @Composable
 fun IntakeCard(
-    intake: TodayIntake
+    intake: TodayIntake,
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().then(
+            if (intake.canBeTaken) {
+                Modifier.clickable(onClick = onClick)
+            } else {
+                Modifier
+            }
+        ),
         colors = CardDefaults.cardColors(
             containerColor = when (intake.status) {
                 IntakeStatus.TAKEN -> PrimarySurface

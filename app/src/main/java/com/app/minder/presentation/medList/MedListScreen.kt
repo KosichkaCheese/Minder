@@ -1,5 +1,6 @@
 package com.app.minder.presentation.medList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,8 @@ import com.app.minder.presentation.components.TopBar
 @Composable
 fun MedListScreen(
     viewModel: MedListViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onMedicationClick: (String) -> Unit
 ){
     val uiState by viewModel.uiState.collectAsState()
 
@@ -60,7 +62,8 @@ fun MedListScreen(
                 ) {
                     items(uiState.medications){ medication ->
                         MedicationCard(
-                            medication = medication
+                            medication = medication,
+                            onClick = {onMedicationClick(medication.id)}
                         )
                     }
                 }
@@ -71,10 +74,11 @@ fun MedListScreen(
 
 @Composable
 fun MedicationCard(
-    medication: Medication
+    medication: Medication,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable(onClick=onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
         )

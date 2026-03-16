@@ -1,5 +1,6 @@
 package com.app.minder.presentation.components
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -10,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun MButton(
@@ -41,8 +41,8 @@ fun MButton(
         } else {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = 18.sp
+                style = MaterialTheme.typography.titleLarge,
+                modifier= Modifier.padding(5.dp)
             )
         }
     }

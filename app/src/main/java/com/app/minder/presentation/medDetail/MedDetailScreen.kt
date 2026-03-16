@@ -75,8 +75,7 @@ fun MedDetailScreen(
     mode: MedScreenMode,
     viewModel: MedDetailViewModel,
     onBack: () -> Unit,
-    onTake: () -> Unit = {},
-    onSkip: () -> Unit = {}
+    onEdit: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentProfile =uiState.currentProfile
@@ -141,11 +140,55 @@ fun MedDetailScreen(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "Название",
-                    color = onPrimarySurface,
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Text(
+                        text = "Название",
+                        color = onPrimarySurface,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    if (mode==MedScreenMode.VIEW) {
+                        Box {
+                            IconButton(
+                                colors = IconButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = OnContainerError,
+                                    disabledContainerColor = Color.Transparent,
+                                    disabledContentColor = OnContainerError
+                                ),
+                                onClick = {
+                                    viewModel.deleteMedication()
+                                    onBack()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    "Удалить",
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            IconButton(
+                                colors = IconButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = MaterialTheme.colorScheme.onSurface,
+                                    disabledContainerColor = Color.Transparent,
+                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                ),
+                                onClick = onEdit,
+                                modifier = Modifier.padding(start=40.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Create,
+                                    "Редактировать",
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                        }
+                    }
+                }
                 if (isEditable){
                     MTextField(
                         value = name,
@@ -260,7 +303,6 @@ fun MedDetailScreen(
                                 else
                                     Color.Transparent
                             ),
-                            enabled = isEditable,
                             modifier = Modifier.width(86.dp).height(135.dp),
                             shape = RoundedCornerShape(10.dp),
                             contentPadding = PaddingValues(0.dp)
@@ -481,50 +523,12 @@ fun MedDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End)
                 ){
                     when (mode) {
-                        MedScreenMode.VIEW -> {
-                            IconButton(
-                                colors = IconButtonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.error,
-                                    disabledContainerColor = Color.Transparent,
-                                    disabledContentColor = MaterialTheme.colorScheme.error
-                                ),
-                                onClick = {
-                                    viewModel.deleteMedication()
-                                    onBack()
-                                }
-                            ){
-                                Icon(
-                                    Icons.Default.Delete,
-                                    "Удалить"
-                                )
-                            }
-                            IconButton(
-                                colors = IconButtonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.onSurface,
-                                    disabledContainerColor = Color.Transparent,
-                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
-                                ),
-                                onClick = { /* TODO: переключить в режим EDIT */ }
-                            ){
-                                Icon(
-                                    Icons.Default.Create,
-                                    "Редактировать"
-                                )
-                            }
-                        }
-
                         MedScreenMode.INTAKE -> {
                             MButton(
-                                text = "Пропустить",
-                                onClick = onSkip,
-                                containerColor = MaterialTheme.colorScheme.tertiary,
-                                contentColor = onTertiaryVariant
-                            )
-                            MButton(
                                 text = "Принять",
-                                onClick = onTake,
+                                onClick = {
+                                    viewModel.markAsTaken(onSuccess = onBack)
+                                },
                                 containerColor = onMint,
                                 contentColor =PrimarySurface
                             )
@@ -600,6 +604,8 @@ fun MedDetailScreen(
                                 contentColor =PrimarySurface
                             )
                         }
+
+                        else -> {}
 
                     }
                 }

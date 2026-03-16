@@ -1,5 +1,6 @@
 package com.app.minder.data.repository
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.app.minder.data.local.dao.MedicationDao
 import com.app.minder.data.local.dao.MedicationIntakeDao
@@ -13,7 +14,6 @@ import com.app.minder.domain.model.MedicationSchedule
 import com.app.minder.domain.model.TodayIntake
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
 
@@ -33,23 +33,36 @@ class MedicationRepImpl(
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
-        val dayEnd = dayStart + 86400000
+        val dayEnd = calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
 
         return combine(
             medicationDao.getMedicationsByProfile(profileId),
-            scheduleDao.getTodaySchedules(dayOfWeek)
+            scheduleDao.getTodaySchedules(dayOfWeek),
+            intakeDao.getAllTodayIntakes(dayStart, dayEnd)
         ){
-            medications, schedules ->
+            medications, schedules, allIntakes ->
             val result = mutableListOf<TodayIntake>()
 
             for (schedule in schedules){
                 val medication = medications.find { it.id == schedule.medicationId }
                     ?: continue
 
-                val intakes = intakeDao.getTodayIntakesByMedication(medication.id, dayStart, dayEnd).first()
+                val intakes = allIntakes.filter{it.medicationId==medication.id}
+                Log.d("GetTodayIntakes", "Schedule time: ${schedule.timeMinutes}")
+                intakes.forEach { intake ->
+                    val intakeMinutes = ((intake.createdAt - dayStart) / 60000).toInt()
+                    val diff = kotlin.math.abs(intakeMinutes - schedule.timeMinutes)
+                    Log.d("GetTodayIntakes", "Intake at $intakeMinutes, diff: $diff")
+                }
+
                 val intake = intakes.find{ intake ->
                     val intakeMinutes = ((intake.createdAt-dayStart)/60000).toInt()
-                    kotlin.math.abs(intakeMinutes-schedule.timeMinutes)<30
+                    kotlin.math.abs(intakeMinutes-schedule.timeMinutes)<=30
                 }
 
                 result.add(
@@ -104,11 +117,21 @@ class MedicationRepImpl(
     }
 
     override suspend fun takeMedication(medicationId: String) {
-        intakeDao.insertMedicationIntake(
-            MedicationIntakeEntity(
-                medicationId = medicationId
+        database.withTransaction {
+            intakeDao.insertMedicationIntake(
+                MedicationIntakeEntity(
+                    medicationId = medicationId
+                )
             )
-        )
+
+            val medication = medicationDao.getMedicationByIdSync(medicationId)
+                ?: throw Exception("Лекарство не найдено")
+
+            val newStock = (medication.stock - medication.dosage).coerceAtLeast(0.0)
+            medicationDao.updateMedication(
+                medication.copy( stock = newStock)
+            )
+        }
     }
 
 }

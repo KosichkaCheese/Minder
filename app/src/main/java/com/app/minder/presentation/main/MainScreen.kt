@@ -146,7 +146,12 @@ fun MainScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(viewModel = homeViewModel)
+                HomeScreen(
+                    viewModel = homeViewModel,
+                    onIntakeClick = { medicationId ->
+                        navController.navigate("medication_detail/$medicationId/intake")
+                    }
+                )
             }
 
             composable(Screen.Metrics.route) {
@@ -160,7 +165,11 @@ fun MainScreen(
             composable(Screen.MedicationList.route) {
                 MedListScreen(
                     viewModel = medListViewModel,
-                    onBack = { navController.popBackStack() })
+                    onBack = { navController.popBackStack() },
+                    onMedicationClick = { medicationId ->
+                        navController.navigate("medication_detail/$medicationId/view")
+                    }
+                )
             }
 
             composable(
@@ -187,7 +196,12 @@ fun MainScreen(
                 MedDetailScreen(
                     mode = mode,
                     onBack = { navController.popBackStack() },
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onEdit = {
+                        medicationId?.let {id ->
+                            navController.navigate("medication_detail/$id/edit")
+                        }
+                    }
                 )
             }
         }

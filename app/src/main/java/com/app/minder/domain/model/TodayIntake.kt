@@ -1,5 +1,6 @@
 package com.app.minder.domain.model
 
+import android.icu.util.Calendar
 import android.util.Log
 
 data class TodayIntake(
@@ -29,6 +30,17 @@ data class TodayIntake(
                 todayMinutes > timeMinutes -> IntakeStatus.MISSED
                 else -> IntakeStatus.UPCOMING
             }
+        }
+
+    val canBeTaken: Boolean
+        get(){
+            if (isTaken) return false
+
+            val calendar = Calendar.getInstance()
+            val currentMinutes = calendar.get(Calendar.HOUR_OF_DAY)*60 + calendar.get(Calendar.MINUTE)
+            val diff = kotlin.math.abs(currentMinutes - timeMinutes)
+
+            return diff<=30
         }
 }
 
