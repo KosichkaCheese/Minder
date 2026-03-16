@@ -27,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.ChipColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -81,6 +80,8 @@ fun MedDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentProfile =uiState.currentProfile
+
+    var inputError by remember { mutableStateOf<String?>(null) }
 
     var name by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
@@ -459,6 +460,22 @@ fun MedDetailScreen(
                     )
                 }
 
+                uiState.error?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+
+                inputError?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top=30.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End)
@@ -523,6 +540,19 @@ fun MedDetailScreen(
                             MButton(
                                 text = "Сохранить",
                                 onClick = {
+                                    if (name==""){
+                                        inputError = "Укажите название"
+                                        return@MButton
+                                    }
+                                    if (dosage==""){
+                                        inputError = "Укажите дозировку"
+                                        return@MButton
+                                    }
+                                    if (selectedTimes.isEmpty()){
+                                        inputError = "Выберите время приема"
+                                        return@MButton
+                                    }
+
                                     currentProfile?.let{ profile ->
                                         viewModel.saveMedication(
                                             name = name,
@@ -591,14 +621,6 @@ fun MedDetailScreen(
                 }
                 showTimePickerDialog = false
             }
-        )
-    }
-
-    uiState.error?.let { error ->
-        Text(
-            text = error,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(16.dp)
         )
     }
 }

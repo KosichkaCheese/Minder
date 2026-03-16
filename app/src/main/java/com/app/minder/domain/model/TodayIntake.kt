@@ -1,5 +1,7 @@
 package com.app.minder.domain.model
 
+import android.util.Log
+
 data class TodayIntake(
     val scheduleId: String,
     val medication: Medication,
@@ -17,7 +19,10 @@ data class TodayIntake(
     val status: IntakeStatus
         get(){
             val now = System.currentTimeMillis()
-            val todayMinutes = (now % 86400000) / 60000
+            val offset = java.util.TimeZone.getDefault().getOffset(now)
+            val todayMinutes = ((now + offset) % 86400000) / 60000
+            Log.i("TimeNow", todayMinutes.toString())
+            Log.i("NeedTime", timeMinutes.toString())
 
             return when {
                 isTaken -> IntakeStatus.TAKEN

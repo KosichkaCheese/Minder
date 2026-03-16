@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,11 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.app.minder.domain.model.IntakeStatus
 import com.app.minder.domain.model.TodayIntake
 import com.app.minder.presentation.components.MSurface
 import com.app.minder.presentation.theme.Mint
+import com.app.minder.presentation.theme.PrimarySurface
 
 @Composable
 fun HomeScreen(
@@ -42,7 +45,7 @@ fun HomeScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(top=16.dp),
             colors = CardDefaults.cardColors(
                 MaterialTheme.colorScheme.background
             )
@@ -85,8 +88,8 @@ fun HomeScreen(
                 )
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(uiState.intakes) { intake ->
                         IntakeCard(
@@ -107,11 +110,12 @@ fun IntakeCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when (intake.status) {
-                IntakeStatus.TAKEN -> MaterialTheme.colorScheme.primaryContainer
-                IntakeStatus.MISSED -> MaterialTheme.colorScheme.errorContainer
-                IntakeStatus.UPCOMING -> MaterialTheme.colorScheme.surface
+                IntakeStatus.TAKEN -> PrimarySurface
+                IntakeStatus.MISSED -> MaterialTheme.colorScheme.tertiary
+                IntakeStatus.UPCOMING -> MaterialTheme.colorScheme.background
             }
-        )
+        ),
+        shape = RoundedCornerShape(30)
     ) {
         Row(
             modifier = Modifier
@@ -122,7 +126,24 @@ fun IntakeCard(
         ) {
             Text(
                 text = intake.medication.name,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = when (intake.status) {
+                    IntakeStatus.TAKEN -> MaterialTheme.colorScheme.primary
+                    IntakeStatus.MISSED -> MaterialTheme.colorScheme.onTertiary
+                    IntakeStatus.UPCOMING -> MaterialTheme.colorScheme.onSurface
+                },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f).padding(end = 10.dp)
+            )
+            Text(
+                text = intake.timeString,
+                style = MaterialTheme.typography.titleMedium,
+                color = when (intake.status) {
+                    IntakeStatus.TAKEN -> MaterialTheme.colorScheme.primary
+                    IntakeStatus.MISSED -> MaterialTheme.colorScheme.onTertiary
+                    IntakeStatus.UPCOMING -> MaterialTheme.colorScheme.onSurface
+                }
             )
         }
     }

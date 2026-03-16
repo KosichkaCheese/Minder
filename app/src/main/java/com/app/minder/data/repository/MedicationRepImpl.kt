@@ -5,7 +5,6 @@ import com.app.minder.data.local.dao.MedicationDao
 import com.app.minder.data.local.dao.MedicationIntakeDao
 import com.app.minder.data.local.dao.MedicationScheduleDao
 import com.app.minder.data.local.database.MedDB
-import com.app.minder.data.local.entity.MedicationEntity
 import com.app.minder.data.local.entity.MedicationIntakeEntity
 import com.app.minder.data.local.entity.toDomain
 import com.app.minder.data.local.entity.toEntity
@@ -26,7 +25,7 @@ class MedicationRepImpl(
 ) : MedicationRepository {
     override fun getTodayIntakes(profileId: String): Flow<List<TodayIntake>> {
         val calendar = Calendar.getInstance()
-        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfWeek = if (calendar.get(Calendar.DAY_OF_WEEK)== Calendar.SUNDAY) 7 else (calendar.get(Calendar.DAY_OF_WEEK)-1)
 
         val dayStart = calendar.apply {
             set(Calendar.HOUR_OF_DAY, 0)
