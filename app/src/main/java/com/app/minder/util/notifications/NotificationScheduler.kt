@@ -13,12 +13,15 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.app.minder.MainActivity
 import com.app.minder.R
+import com.app.minder.data.repository.MedicationRepository
 import com.app.minder.domain.model.MedicationSchedule
+import kotlinx.coroutines.flow.first
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class NotificationScheduler(
-    private val context: Context
+    private val context: Context,
+    private val medicationRep: MedicationRepository
 ) {
     companion object {
         const val STOCK_CHANNEL_ID = "stock_reminders"
@@ -90,7 +93,7 @@ class NotificationScheduler(
             .cancelAllWorkByTag("medication_$medicationId")
     }
 
-    suspend fun scheduleMedicationReminders(
+    fun scheduleMedicationReminders(
         medicationId: String,
         medicationName: String,
         schedules: List<MedicationSchedule>
@@ -175,6 +178,20 @@ class NotificationScheduler(
             )
         }
 
+    }
+
+    suspend fun rescheduleReminders(profileId: String){
+        val medications = medicationRep.getMedicationList(profileId).first()
+
+        medications.forEach { medication ->
+            val schedules = medicationRep.getScheduleByMedication(medication.id).first()
+
+            scheduleMedicationReminders(
+                medicationId = medication.id,
+                medicationName = medication.name,
+                schedules = schedules
+            )
+        }
     }
 
 }

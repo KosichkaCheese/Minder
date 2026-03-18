@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
             profileDao = database.profileDao()
         )
 
-        val notificationScheduler = NotificationScheduler(applicationContext)
+        val notificationScheduler = NotificationScheduler(applicationContext, medicationRepository)
 
         val getTodayIntakesUseCase = GetTodayIntakesUseCase(medicationRepository, profileRepository)
         val getMedsUseCase = GetMedsUseCase(medicationRepository, profileRepository)
