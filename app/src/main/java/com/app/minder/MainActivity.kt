@@ -20,9 +20,9 @@ import com.app.minder.domain.usecase.GetTodayIntakesUseCase
 import com.app.minder.domain.usecase.LoginUseCase
 import com.app.minder.domain.usecase.RegisterUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
+import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
-import com.app.minder.presentation.medDetail.MedDetailViewModel
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
         val deleteMedUseCase = DeleteMedUseCase(medicationRepository, notificationScheduler)
         val getCurrentProfileUseCase = GetCurrentProfileUseCase(profileRepository)
         val saveMedUseCase = SaveMedUseCase(medicationRepository, notificationScheduler)
+        val takeMedicationUseCase = TakeMedicationUseCase(medicationRepository, notificationScheduler)
 
 
         setContent {
@@ -98,6 +99,7 @@ class MainActivity : ComponentActivity() {
                             saveMedicationUseCase = saveMedUseCase,
                             deleteMedicationUseCase = deleteMedUseCase,
                             getCurrentProfileUseCase = getCurrentProfileUseCase,
+                            takeMedicationUseCase = takeMedicationUseCase,
                             medicationRep = medicationRepository
                         )
                     }

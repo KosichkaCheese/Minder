@@ -118,14 +118,14 @@ class MedicationRepImpl(
 
     override suspend fun takeMedication(medicationId: String) {
         database.withTransaction {
+            val medication = medicationDao.getMedicationByIdSync(medicationId)
+                ?: throw Exception("Лекарство не найдено")
+
             intakeDao.insertMedicationIntake(
                 MedicationIntakeEntity(
                     medicationId = medicationId
                 )
             )
-
-            val medication = medicationDao.getMedicationByIdSync(medicationId)
-                ?: throw Exception("Лекарство не найдено")
 
             val newStock = (medication.stock - medication.dosage).coerceAtLeast(0.0)
             medicationDao.updateMedication(

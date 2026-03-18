@@ -34,6 +34,7 @@ import com.app.minder.data.repository.MedicationRepository
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
+import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.home.HomeScreen
 import com.app.minder.presentation.medDetail.MedDetailScreen
 import com.app.minder.presentation.medDetail.MedDetailViewModel
@@ -53,6 +54,7 @@ fun MainScreen(
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
+    takeMedicationUseCase: TakeMedicationUseCase,
     medicationRep: MedicationRepository
 ) {
     val navController = rememberNavController()
@@ -189,7 +191,8 @@ fun MainScreen(
                         saveMedicationUseCase = saveMedicationUseCase,
                         deleteMedicationUseCase = deleteMedicationUseCase,
                         getCurrentProfileUseCase = getCurrentProfileUseCase,
-                        medicationRep = medicationRep
+                        medicationRep = medicationRep,
+                        takeMedicationUseCase = takeMedicationUseCase,
                     )
                 }
 

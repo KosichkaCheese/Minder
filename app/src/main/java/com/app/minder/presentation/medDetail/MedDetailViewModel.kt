@@ -11,6 +11,7 @@ import com.app.minder.domain.model.Timing
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
+import com.app.minder.domain.usecase.TakeMedicationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,7 @@ class MedDetailViewModel(
     private val saveMedicationUseCase: SaveMedUseCase,
     private val deleteMedicationUseCase: DeleteMedUseCase,
     private val getCurrentProfileUseCase: GetCurrentProfileUseCase,
+    private val takeMedicationUseCase: TakeMedicationUseCase,
     private val medicationRep: MedicationRepository
 ): ViewModel() {
     private val _uiState = MutableStateFlow(MedDetailUiState())
@@ -170,23 +172,16 @@ class MedDetailViewModel(
     }
 
     fun markAsTaken(onSuccess:()->Unit){
+        val id = medicationId ?: return
         viewModelScope.launch {
-            if (medicationId!=null) {
-                try {
-                    medicationRep.takeMedication(medicationId)
-                    onSuccess()
-                } catch (e: Exception){
+            takeMedicationUseCase(id)
+                .onSuccess { onSuccess() }
+                .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = "Не удалось отметить прием: ${e.message}"
                     )
                 }
-            } else {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = "Не удалось отметить прием: id лекарства не найден"
-                )
-            }
         }
     }
 }

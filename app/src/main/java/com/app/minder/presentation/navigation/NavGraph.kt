@@ -8,6 +8,7 @@ import com.app.minder.data.repository.MedicationRepository
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
+import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
@@ -23,6 +24,7 @@ fun NavGraph(
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
+    takeMedicationUseCase: TakeMedicationUseCase,
     medicationRep: MedicationRepository,
     startDestination: String
 ) {
@@ -48,6 +50,7 @@ fun NavGraph(
                 saveMedicationUseCase = saveMedicationUseCase,
                 deleteMedicationUseCase = deleteMedicationUseCase,
                 getCurrentProfileUseCase = getCurrentProfileUseCase,
+                takeMedicationUseCase = takeMedicationUseCase,
                 medicationRep = medicationRep
             )
         }
