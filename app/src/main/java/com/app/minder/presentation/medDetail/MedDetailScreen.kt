@@ -1,5 +1,6 @@
 package com.app.minder.presentation.medDetail
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,7 @@ import com.app.minder.presentation.components.MTextField
 import com.app.minder.presentation.components.TimePickerDialog
 import com.app.minder.presentation.components.TopBar
 import com.app.minder.presentation.theme.*
+import com.app.minder.util.permissions.PermissionDialog
 
 enum class MedScreenMode {
     VIEW,
@@ -81,6 +83,7 @@ fun MedDetailScreen(
     val currentProfile =uiState.currentProfile
 
     var inputError by remember { mutableStateOf<String?>(null) }
+    var showPermissionDialog by remember { mutableStateOf(false) }
 
     var name by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
@@ -120,6 +123,24 @@ fun MedDetailScreen(
     }
 
     val isEditable = mode == MedScreenMode.CREATE || mode == MedScreenMode.EDIT
+
+    fun saveMedication(){
+        currentProfile?.let { profile ->
+            viewModel.saveMedication(
+                name = name,
+                dosage = dosage.replace(",", ".").toDoubleOrNull()
+                    ?: 0.0,
+                unit = selectedUnit,
+                stock = stock.replace(",", ".").toDoubleOrNull()
+                    ?: 0.0,
+                note = note,
+                timing = selectedTiming,
+                selectedDays = selectedDays,
+                selectedTimes = selectedTimes
+            )
+            onBack()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -534,7 +555,7 @@ fun MedDetailScreen(
                             )
                         }
 
-                        MedScreenMode.CREATE -> {
+                        MedScreenMode.CREATE, MedScreenMode.EDIT -> {
                             MButton(
                                 text = "Отмена",
                                 onClick = onBack,
@@ -557,47 +578,10 @@ fun MedDetailScreen(
                                         return@MButton
                                     }
 
-                                    currentProfile?.let{ profile ->
-                                        viewModel.saveMedication(
-                                            name = name,
-                                            dosage = dosage.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                                            unit = selectedUnit,
-                                            stock = stock.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                                            note = note,
-                                            timing = selectedTiming,
-                                            selectedDays = selectedDays,
-                                            selectedTimes = selectedTimes
-                                        )
-                                        onBack()
-                                    }
-                                },
-                                containerColor = onMint,
-                                contentColor =PrimarySurface
-                            )
-                        }
-
-                        MedScreenMode.EDIT -> {
-                            MButton(
-                                text = "Отмена",
-                                onClick = onBack,
-                                containerColor = onPrimarySurfaceSelection,
-                                contentColor = onMint
-                            )
-                            MButton(
-                                text = "Сохранить",
-                                onClick = {
-                                    currentProfile?.let{ profile ->
-                                        viewModel.saveMedication(
-                                            name = name,
-                                            dosage = dosage.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                                            unit = selectedUnit,
-                                            stock = stock.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                                            note = note,
-                                            timing = selectedTiming,
-                                            selectedDays = selectedDays,
-                                            selectedTimes = selectedTimes
-                                        )
-                                        onBack()
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        showPermissionDialog = true
+                                    } else {
+                                        saveMedication()
                                     }
                                 },
                                 containerColor = onMint,
@@ -626,6 +610,19 @@ fun MedDetailScreen(
                     selectedTimes + newTime
                 }
                 showTimePickerDialog = false
+            }
+        )
+    }
+
+    if (showPermissionDialog){
+        PermissionDialog(
+            onResult = { granted ->
+                showPermissionDialog = false
+                saveMedication()
+            },
+            onDismiss = {
+                showPermissionDialog = false
+                saveMedication()
             }
         )
     }
