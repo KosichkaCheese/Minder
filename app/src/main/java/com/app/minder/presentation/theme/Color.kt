@@ -18,7 +18,7 @@ val OnPrimary = Color(0xFF596334)
 val PrimarySurface = Color(0xFFD7DAB3)
 val onPrimarySurface = Color(0xFF353E13)
 val onPrimarySurfaceSelection = Color(0xFFB6BF91)
-val NavBar = Color(0x4B9FAA74)
+val NavBar = Color(0xD59FAA74)
 
 val Secondary = Color(0xFFD7DAB3)
 
