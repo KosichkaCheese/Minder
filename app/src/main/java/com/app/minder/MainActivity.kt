@@ -27,6 +27,7 @@ import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
 import com.app.minder.presentation.theme.MedTheme
+import com.app.minder.util.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -53,11 +54,13 @@ class MainActivity : ComponentActivity() {
             profileDao = database.profileDao()
         )
 
+        val notificationScheduler = NotificationScheduler(applicationContext)
+
         val getTodayIntakesUseCase = GetTodayIntakesUseCase(medicationRepository, profileRepository)
         val getMedsUseCase = GetMedsUseCase(medicationRepository, profileRepository)
-        val deleteMedUseCase = DeleteMedUseCase(medicationRepository)
+        val deleteMedUseCase = DeleteMedUseCase(medicationRepository, notificationScheduler)
         val getCurrentProfileUseCase = GetCurrentProfileUseCase(profileRepository)
-        val saveMedUseCase = SaveMedUseCase(medicationRepository)
+        val saveMedUseCase = SaveMedUseCase(medicationRepository, notificationScheduler)
 
 
         setContent {

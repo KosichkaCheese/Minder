@@ -1,5 +1,6 @@
 package com.app.minder.presentation.medDetail
 
+import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -81,6 +83,8 @@ fun MedDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentProfile =uiState.currentProfile
+
+    val context = LocalContext.current
 
     var inputError by remember { mutableStateOf<String?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -139,6 +143,15 @@ fun MedDetailScreen(
                 selectedTimes = selectedTimes
             )
             onBack()
+        }
+    }
+
+    fun hasNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+                    android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            true
         }
     }
 
@@ -578,7 +591,7 @@ fun MedDetailScreen(
                                         return@MButton
                                     }
 
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    if (!hasNotificationPermission()) {
                                         showPermissionDialog = true
                                     } else {
                                         saveMedication()
