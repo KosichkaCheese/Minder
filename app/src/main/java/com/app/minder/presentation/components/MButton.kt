@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -20,7 +21,8 @@ fun MButton(
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge
 ) {
     Button(
         onClick = onClick,
@@ -41,7 +43,7 @@ fun MButton(
         } else {
             Text(
                 text = text,
-                style = MaterialTheme.typography.titleLarge,
+                style = textStyle,
                 modifier= Modifier.padding(5.dp)
             )
         }
