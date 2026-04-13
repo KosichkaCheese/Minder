@@ -158,7 +158,8 @@ fun MedDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()).padding(16.dp),
+            .padding(start = 16.dp, bottom = 0.dp, end = 16.dp, top = 0.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
