@@ -42,6 +42,8 @@ import com.app.minder.presentation.medDetail.MedScreenMode
 import com.app.minder.presentation.medList.MedListScreen
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
+import com.app.minder.presentation.profile.ProfileScreen
+import com.app.minder.presentation.profile.ProfileViewModel
 import com.app.minder.presentation.theme.Mint
 import com.app.minder.presentation.theme.NavBar
 import com.app.minder.presentation.theme.onMint
@@ -51,6 +53,7 @@ import com.app.minder.presentation.theme.onTertiaryVariant
 fun MainScreen(
     homeViewModel: HomeViewModel,
     medListViewModel: MedListViewModel,
+    profileViewModel: ProfileViewModel,
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
@@ -161,7 +164,9 @@ fun MainScreen(
             }
 
             composable(Screen.Profiles.route) {
-                Text("Профили - TODO")
+                ProfileScreen(
+                    viewModel = profileViewModel
+                )
             }
 
             composable(Screen.MedicationList.route) {
