@@ -24,4 +24,10 @@ interface ProfileDao {
 
     @Query("SELECT * FROM profiles WHERE userId in (SELECT userId FROM users WHERE isCurrent=1) AND isCurrent=1")
     fun getCurrentProfile(): Flow<ProfileEntity?>
+
+    @Query("SELECT * FROM profiles WHERE userId in (SELECT userId FROM users WHERE isCurrent=1)")
+    fun getProfilesByUser(): Flow<List<ProfileEntity>>
+
+    @Query("SELECT * from profiles WHERE id=:id")
+    suspend fun  getProfileById(id: String): ProfileEntity?
 }

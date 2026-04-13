@@ -14,6 +14,7 @@ import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.main.MainScreen
 import com.app.minder.presentation.medList.MedListViewModel
+import com.app.minder.presentation.profile.ProfileViewModel
 
 @Composable
 fun NavGraph(
@@ -21,6 +22,7 @@ fun NavGraph(
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     medListViewModel: MedListViewModel,
+    profileViewModel: ProfileViewModel,
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
@@ -47,6 +49,7 @@ fun NavGraph(
             MainScreen(
                 homeViewModel = homeViewModel,
                 medListViewModel = medListViewModel,
+                profileViewModel = profileViewModel,
                 saveMedicationUseCase = saveMedicationUseCase,
                 deleteMedicationUseCase = deleteMedicationUseCase,
                 getCurrentProfileUseCase = getCurrentProfileUseCase,

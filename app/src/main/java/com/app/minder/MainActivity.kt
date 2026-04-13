@@ -13,6 +13,7 @@ import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepImpl
 import com.app.minder.data.repository.MedicationRepImpl
 import com.app.minder.data.repository.ProfileRepImpl
+import com.app.minder.domain.usecase.CreateProfileUseCase
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.GetMedsUseCase
@@ -20,12 +21,14 @@ import com.app.minder.domain.usecase.GetTodayIntakesUseCase
 import com.app.minder.domain.usecase.LoginUseCase
 import com.app.minder.domain.usecase.RegisterUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
+import com.app.minder.domain.usecase.SwitchProfileUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
+import com.app.minder.presentation.profile.ProfileViewModel
 import com.app.minder.presentation.theme.MedTheme
 import com.app.minder.util.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.first
@@ -51,7 +54,8 @@ class MainActivity : ComponentActivity() {
             database = database
         )
         val profileRepository = ProfileRepImpl(
-            profileDao = database.profileDao()
+            profileDao = database.profileDao(),
+            database = database
         )
 
         val notificationScheduler = NotificationScheduler(applicationContext, medicationRepository)
@@ -62,6 +66,8 @@ class MainActivity : ComponentActivity() {
         val getCurrentProfileUseCase = GetCurrentProfileUseCase(profileRepository)
         val saveMedUseCase = SaveMedUseCase(medicationRepository, notificationScheduler)
         val takeMedicationUseCase = TakeMedicationUseCase(medicationRepository, notificationScheduler)
+        val switchProfileUseCase = SwitchProfileUseCase(profileRepository)
+        val createProfileUseCase = CreateProfileUseCase(profileRepository)
 
 
         setContent {
@@ -89,12 +95,20 @@ class MainActivity : ComponentActivity() {
                         val authViewModel = AuthViewModel(loginUseCase, registerUseCase)
                         val homeViewModel = HomeViewModel(getTodayIntakesUseCase)
                         val medListViewModel = MedListViewModel(getMedsUseCase)
+                        val profileViewModel = ProfileViewModel(
+                            getCurrentProfileUseCase,
+                            switchProfileUseCase,
+                            createProfileUseCase,
+                            profileRepository,
+                            authRepository
+                        )
 
                         NavGraph(
                             navController = navController,
                             authViewModel = authViewModel,
                             homeViewModel = homeViewModel,
                             medListViewModel = medListViewModel,
+                            profileViewModel = profileViewModel,
                             startDestination = destination,
                             saveMedicationUseCase = saveMedUseCase,
                             deleteMedicationUseCase = deleteMedUseCase,
