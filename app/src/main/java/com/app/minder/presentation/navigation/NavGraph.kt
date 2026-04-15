@@ -54,7 +54,13 @@ fun NavGraph(
                 deleteMedicationUseCase = deleteMedicationUseCase,
                 getCurrentProfileUseCase = getCurrentProfileUseCase,
                 takeMedicationUseCase = takeMedicationUseCase,
-                medicationRep = medicationRep
+                medicationRep = medicationRep,
+                onLogout = {
+                    authViewModel.resetAuthState()
+                    navController.navigate(Screen.Auth.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
             )
         }
     }

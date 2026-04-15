@@ -1,6 +1,7 @@
 package com.app.minder.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -113,7 +114,7 @@ class AuthRepImpl (
             database.withTransaction {
                 userDao.clearCurrentUser()
                 profileDao.clearCurrentProfile()
-                userDao.updateUser(user.copy(isCurrent = false))
+                userDao.updateUser(user.copy(isCurrent = true))
 
                 val defaultProfile = profileDao.getDefaultProfile(user.id)
                 defaultProfile?.let{

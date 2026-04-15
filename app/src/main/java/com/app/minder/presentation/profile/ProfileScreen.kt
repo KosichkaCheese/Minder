@@ -50,7 +50,8 @@ data class LinkedUser(
 )
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    onLogout: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -284,7 +285,10 @@ fun ProfileScreen(
             title = "Выйти",
             text = "Вы уверены, что хотите выйти из аккаунта? Вы можете потерять историю приемов и измерений," +
             " а также несинхронизированные данные.",
-            onSubmit = {},
+            onSubmit = {
+                viewModel.logout()
+                onLogout()
+            },
             onDismiss = {showLeave = false}
         )
     }

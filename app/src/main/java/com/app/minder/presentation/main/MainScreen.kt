@@ -58,7 +58,8 @@ fun MainScreen(
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
     takeMedicationUseCase: TakeMedicationUseCase,
-    medicationRep: MedicationRepository
+    medicationRep: MedicationRepository,
+    onLogout: () -> Unit = {}
 ) {
     val navController = rememberNavController()
     var isFabExpanded by remember{mutableStateOf(false)}
@@ -165,7 +166,8 @@ fun MainScreen(
 
             composable(Screen.Profiles.route) {
                 ProfileScreen(
-                    viewModel = profileViewModel
+                    viewModel = profileViewModel,
+                    onLogout = onLogout
                 )
             }
 
