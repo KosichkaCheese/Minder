@@ -19,7 +19,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top=16.dp, bottom = 8.dp, start=8.dp),
+            .padding(bottom = 8.dp, start=8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
