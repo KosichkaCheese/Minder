@@ -14,7 +14,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TopBar(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    title: String = ""
 ){
     Row(
         modifier = Modifier
@@ -34,5 +35,12 @@ fun TopBar(
                 modifier = Modifier.size(45.dp)
             )
         }
+
+        Text(
+            text = title,
+            modifier = Modifier.padding(start = 8.dp),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
