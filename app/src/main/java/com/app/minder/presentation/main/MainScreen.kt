@@ -30,17 +30,24 @@ import com.app.minder.presentation.navigation.bottomNavItems
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.app.minder.data.repository.MeasurementRepository
 import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.data.repository.ProfileRepository
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
+import com.app.minder.domain.usecase.GetMeasurementAnalysisUseCase
+import com.app.minder.domain.usecase.SaveMeasurementUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.home.HomeScreen
+import com.app.minder.presentation.measurementDetail.MeasurementDetailScreen
+import com.app.minder.presentation.measurementDetail.MeasurementDetailViewModel
 import com.app.minder.presentation.medDetail.MedDetailScreen
 import com.app.minder.presentation.medDetail.MedDetailViewModel
 import com.app.minder.presentation.medDetail.MedScreenMode
 import com.app.minder.presentation.medList.MedListScreen
 import com.app.minder.presentation.medList.MedListViewModel
+import com.app.minder.presentation.metrics.MetricsScreen
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.profile.ProfileScreen
 import com.app.minder.presentation.profile.ProfileViewModel
@@ -58,7 +65,11 @@ fun MainScreen(
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
     takeMedicationUseCase: TakeMedicationUseCase,
+    getMeasurementAnalysisUseCase: GetMeasurementAnalysisUseCase,
+    saveMeasurementUseCase: SaveMeasurementUseCase,
     medicationRep: MedicationRepository,
+    measurementRep: MeasurementRepository,
+    profileRep: ProfileRepository,
     onLogout: () -> Unit = {}
 ) {
     val navController = rememberNavController()
@@ -132,8 +143,8 @@ fun MainScreen(
             } else if (currentRoute== Screen.MedicationList.route){
                 FloatingActionButton(
                     onClick = {navController.navigate("medication_detail/new/create")},
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    contentColor = onTertiaryVariant,
+                    containerColor = MaterialTheme.colorScheme.onTertiary,
+                    contentColor = MaterialTheme.colorScheme.tertiary,
                     elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
                     shape = CircleShape
                 ) {
@@ -161,7 +172,34 @@ fun MainScreen(
             }
 
             composable(Screen.Metrics.route) {
-                Text("Показатели - TODO")
+                MetricsScreen(
+                    onSelect = { type ->
+                        navController.navigate("measurement_detail/${type.id}")
+                    }
+                )
+            }
+
+            composable(
+                route = Screen.MeasurementDetail.route,
+                arguments = listOf(
+                    navArgument("id") { type = NavType.StringType }
+                )
+            ){ backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id") ?: return@composable
+                val viewModel = remember(id) {
+                    MeasurementDetailViewModel(
+                        measurementTypeId = id,
+                        measurementRep = measurementRep,
+                        profileRep = profileRep,
+                        getMeasurementAnalysisUseCase = getMeasurementAnalysisUseCase,
+                        saveMeasurementUseCase = saveMeasurementUseCase
+                    )
+                }
+                MeasurementDetailScreen(
+                    viewModel = viewModel,
+                    measurementTypeId = id,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Profiles.route) {
@@ -261,14 +299,15 @@ fun FloatingActionButtonMenu(
 
         FloatingActionButton(
             onClick = {onExpandChange(!expanded)},
-            containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = onTertiaryVariant,
+            containerColor = MaterialTheme.colorScheme.onTertiary,
+            contentColor = MaterialTheme.colorScheme.tertiary,
             elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
             shape = CircleShape
         ) {
             Icon(
                 imageVector = if (expanded) Icons.Default.Close else Icons.Default.Menu,
-                contentDescription = if (expanded) "Закрыть" else "Меню"
+                contentDescription = if (expanded) "Закрыть" else "Меню",
+                modifier = Modifier.size(30.dp)
             )
         }
     }

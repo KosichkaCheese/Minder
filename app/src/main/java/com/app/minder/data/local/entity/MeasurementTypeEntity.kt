@@ -2,7 +2,7 @@ package com.app.minder.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.UUID
+import com.app.minder.domain.model.MeasurementType
 
 @Entity(tableName = "measurement_types")
 data class MeasurementTypeEntity (
@@ -13,3 +13,23 @@ data class MeasurementTypeEntity (
     val lowerBound: Double?,
     val upperBound: Double?
 )
+
+fun MeasurementTypeEntity.toDomain(): MeasurementType {
+    return MeasurementType(
+        id = id,
+        name = name,
+        unit = unit,
+        lowerBound = lowerBound,
+        upperBound = upperBound
+    )
+}
+
+fun MeasurementType.toEntity(): MeasurementTypeEntity{
+    return MeasurementTypeEntity(
+        id = id,
+        name = name,
+        unit = unit,
+        lowerBound = lowerBound,
+        upperBound = upperBound
+    )
+}

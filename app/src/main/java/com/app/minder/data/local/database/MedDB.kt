@@ -38,6 +38,8 @@ abstract class MedDB : RoomDatabase(){
     abstract fun medicationDao(): MedicationDao
     abstract fun medicationIntakeDao(): MedicationIntakeDao
     abstract fun medicationScheduleDao(): MedicationScheduleDao
+    abstract fun measurementDao(): MeasurementDao
+    abstract fun measurementGoalDao(): MeasurementGoalDao
 
     companion object{
         @Volatile

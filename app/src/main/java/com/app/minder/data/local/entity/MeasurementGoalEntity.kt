@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.MeasurementGoal
 import java.util.UUID
 
 @Entity(
@@ -30,3 +31,21 @@ data class MeasurementGoalEntity (
     val profileId: String,
     val value: Double
 )
+
+fun MeasurementGoalEntity.toDomain(): MeasurementGoal{
+    return MeasurementGoal(
+        id = id,
+        typeId = typeId,
+        profileId = profileId,
+        value = value
+    )
+}
+
+fun MeasurementGoal.toEntity(): MeasurementGoalEntity{
+    return MeasurementGoalEntity(
+        id = id,
+        typeId = typeId,
+        profileId = profileId,
+        value = value
+    )
+}

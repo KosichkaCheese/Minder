@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.app.minder.data.local.entity.MeasurementEntity
 import com.app.minder.data.local.entity.MeasurementTypeEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +17,7 @@ interface MeasurementTypeDao {
 
     @Query("SELECT * FROM measurement_types")
     fun getAllMeasurementTypes(): Flow<List<MeasurementTypeEntity>>
+
+    @Query("SELECT * FROM measurement_types WHERE id = :id")
+    fun getMeasurementTypeById(id: String): Flow<MeasurementTypeEntity>
 }

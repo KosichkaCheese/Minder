@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.app.minder.domain.model.Measurement
 import java.util.UUID
 
 @Entity(
@@ -33,3 +34,13 @@ data class MeasurementEntity (
     val note: String?,
     val createdAt: Long = System.currentTimeMillis()
 )
+
+fun MeasurementEntity.toDomain(): Measurement{
+    return Measurement(
+        id = id,
+        result = result,
+        note = note,
+        createdAt = createdAt
+    )
+}
+

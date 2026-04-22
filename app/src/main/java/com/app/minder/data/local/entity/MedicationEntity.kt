@@ -2,7 +2,6 @@ package com.app.minder.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.app.minder.domain.model.MeasurementUnit
 import com.app.minder.domain.model.Medication

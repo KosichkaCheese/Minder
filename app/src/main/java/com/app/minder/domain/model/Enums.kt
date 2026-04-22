@@ -20,3 +20,5 @@ enum class Timing(val displayName: String, @DrawableRes val iconRes: Int){
     AFTER("после еды", R.drawable.after),
     ANY("не зависит от еды", R.drawable.any)
 }
+
+enum class Trend { INCREASING, DECREASING, STABLE}

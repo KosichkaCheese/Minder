@@ -2,24 +2,30 @@ package com.app.minder
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.rememberNavController
 import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.repository.AuthRepImpl
+import com.app.minder.data.repository.MeasurementRepImpl
 import com.app.minder.data.repository.MedicationRepImpl
 import com.app.minder.data.repository.ProfileRepImpl
 import com.app.minder.domain.usecase.CreateProfileUseCase
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
+import com.app.minder.domain.usecase.GetMeasurementAnalysisUseCase
 import com.app.minder.domain.usecase.GetMedsUseCase
 import com.app.minder.domain.usecase.GetTodayIntakesUseCase
 import com.app.minder.domain.usecase.LoginUseCase
 import com.app.minder.domain.usecase.RegisterUseCase
+import com.app.minder.domain.usecase.SaveMeasurementUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.SwitchProfileUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
@@ -29,13 +35,21 @@ import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
 import com.app.minder.presentation.profile.ProfileViewModel
+import com.app.minder.presentation.theme.Background
 import com.app.minder.presentation.theme.MedTheme
+import com.app.minder.presentation.theme.OnContainer
 import com.app.minder.util.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                scrim = Background.toArgb(),
+                darkScrim = OnContainer.toArgb()
+            )
+        )
         super.onCreate(savedInstanceState)
 
         val database = MedDB.getDB(applicationContext)
@@ -57,6 +71,12 @@ class MainActivity : ComponentActivity() {
             profileDao = database.profileDao(),
             database = database
         )
+        val measurementRepository = MeasurementRepImpl(
+            measurementDao = database.measurementDao(),
+            measurementGoalDao = database.measurementGoalDao(),
+            measurementTypeDao = database.measurementTypeDao(),
+            database = database
+        )
 
         val notificationScheduler = NotificationScheduler(applicationContext, medicationRepository)
 
@@ -68,6 +88,8 @@ class MainActivity : ComponentActivity() {
         val takeMedicationUseCase = TakeMedicationUseCase(medicationRepository, notificationScheduler)
         val switchProfileUseCase = SwitchProfileUseCase(profileRepository)
         val createProfileUseCase = CreateProfileUseCase(profileRepository)
+        val getMeasurementAnalysisUseCase = GetMeasurementAnalysisUseCase(measurementRepository)
+        val saveMeasurementUseCase = SaveMeasurementUseCase(measurementRepository)
 
 
         setContent {
@@ -114,7 +136,11 @@ class MainActivity : ComponentActivity() {
                             deleteMedicationUseCase = deleteMedUseCase,
                             getCurrentProfileUseCase = getCurrentProfileUseCase,
                             takeMedicationUseCase = takeMedicationUseCase,
-                            medicationRep = medicationRepository
+                            medicationRep = medicationRepository,
+                            measurementRep = measurementRepository,
+                            profileRep = profileRepository,
+                            getMeasurementAnalysisUseCase = getMeasurementAnalysisUseCase,
+                            saveMeasurementUseCase = saveMeasurementUseCase
                         )
                     }
                 }
