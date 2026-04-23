@@ -243,12 +243,14 @@ fun ProfileScreen(
                     onClick = {showInvite = true},
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.surfaceContainer,
+                    textStyle = MaterialTheme.typography.bodyLarge
                 )
                 MButton(
                     text = "Принять\nприглашение",
                     onClick = {showAccept = true},
                     containerColor = PrimarySurface,
                     contentColor = MaterialTheme.colorScheme.primary,
+                    textStyle = MaterialTheme.typography.bodyLarge
                 )
             }
         }
