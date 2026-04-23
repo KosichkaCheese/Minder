@@ -228,7 +228,7 @@ fun SaveMeasurementPopup(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = value1,
+                        text = "%.2f".format(value1.toFloat()),
                         style = MaterialTheme.typography.bodyLarge,
                         color = textColor,
                         textAlign = TextAlign.Center
