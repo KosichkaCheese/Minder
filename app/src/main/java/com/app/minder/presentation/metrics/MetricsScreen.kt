@@ -159,7 +159,7 @@ fun MeasurementCard(
             Text(
                 text = measurementType.title,
                 color = measurementType.iconColor,
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }
