@@ -2,23 +2,25 @@ package com.app.minder.presentation.metrics
 
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BubbleChart
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -99,23 +101,40 @@ val measurementTypes = listOf(
 
 @Composable
 fun MetricsScreen(
-    onSelect: (MeasurementType) -> Unit
+    onSelect: (MeasurementType) -> Unit,
+    onCorrelationClick: () -> Unit = {}
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        LazyVerticalGrid(
-            modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-            items(measurementTypes) { measurementType ->
-                MeasurementCard(
-                    measurementType = measurementType,
-                    onClick = {onSelect(measurementType)}
-                )
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(measurementTypes) { measurementType ->
+                    MeasurementCard(
+                        measurementType = measurementType,
+                        onClick = { onSelect(measurementType) }
+                    )
+                }
             }
+        }
+
+        FloatingActionButton(
+            onClick = onCorrelationClick,
+            containerColor = MaterialTheme.colorScheme.onTertiary,
+            contentColor = MaterialTheme.colorScheme.tertiary,
+            elevation = FloatingActionButtonDefaults.elevation(2.dp, 0.dp),
+            shape = CircleShape,
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.help),
+                contentDescription = "Анализ"
+            )
         }
     }
 }

@@ -15,6 +15,7 @@ import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthScreen
 import com.app.minder.presentation.auth.AuthViewModel
+import com.app.minder.presentation.correlation.CorrelationViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.main.MainScreen
 import com.app.minder.presentation.medList.MedListViewModel
@@ -27,6 +28,7 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     medListViewModel: MedListViewModel,
     profileViewModel: ProfileViewModel,
+    correlationViewModel: CorrelationViewModel,
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
@@ -58,6 +60,7 @@ fun NavGraph(
                 homeViewModel = homeViewModel,
                 medListViewModel = medListViewModel,
                 profileViewModel = profileViewModel,
+                correlationViewModel = correlationViewModel,
                 saveMedicationUseCase = saveMedicationUseCase,
                 deleteMedicationUseCase = deleteMedicationUseCase,
                 getCurrentProfileUseCase = getCurrentProfileUseCase,

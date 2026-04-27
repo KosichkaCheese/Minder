@@ -45,4 +45,8 @@ class MeasurementRepImpl(
     override suspend fun saveMeasurement(measurement: MeasurementEntity) {
         measurementDao.insertMeasurement(measurement)
     }
+
+    override fun getAllMeasurementTypes(): Flow<List<MeasurementTypeEntity>> {
+        return measurementTypeDao.getAllMeasurementTypes()
+    }
 }

@@ -39,6 +39,8 @@ import com.app.minder.domain.usecase.GetMeasurementAnalysisUseCase
 import com.app.minder.domain.usecase.SaveMeasurementUseCase
 import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
+import com.app.minder.presentation.correlation.CorrelationScreen
+import com.app.minder.presentation.correlation.CorrelationViewModel
 import com.app.minder.presentation.home.HomeScreen
 import com.app.minder.presentation.measurementDetail.MeasurementDetailScreen
 import com.app.minder.presentation.measurementDetail.MeasurementDetailViewModel
@@ -61,6 +63,7 @@ fun MainScreen(
     homeViewModel: HomeViewModel,
     medListViewModel: MedListViewModel,
     profileViewModel: ProfileViewModel,
+    correlationViewModel: CorrelationViewModel,
     saveMedicationUseCase: SaveMedUseCase,
     deleteMedicationUseCase: DeleteMedUseCase,
     getCurrentProfileUseCase: GetCurrentProfileUseCase,
@@ -175,7 +178,17 @@ fun MainScreen(
                 MetricsScreen(
                     onSelect = { type ->
                         navController.navigate("measurement_detail/${type.id}")
+                    },
+                    onCorrelationClick = {
+                        navController.navigate(Screen.Correlation.route)
                     }
+                )
+            }
+
+            composable(Screen.Correlation.route) {
+                CorrelationScreen(
+                    onBack = { navController.popBackStack() },
+                    viewModel = correlationViewModel
                 )
             }
 

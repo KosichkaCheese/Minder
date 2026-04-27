@@ -1,6 +1,7 @@
 package com.app.minder.data.repository
 
 import com.app.minder.data.local.entity.MedicationEntity
+import com.app.minder.data.local.entity.MedicationIntakeEntity
 import com.app.minder.data.local.entity.MedicationScheduleEntity
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.MedicationSchedule
@@ -16,4 +17,5 @@ interface MedicationRepository {
     fun getScheduleByMedication(medicationId: String): Flow<List<MedicationSchedule>>
     suspend fun saveMedication(medication: Medication, schedules: List<MedicationSchedule>)
     suspend fun takeMedication(medicationId: String)
+    fun getIntakesByRange(medicationId: String, start: Long): Flow<List<MedicationIntakeEntity>>
 }

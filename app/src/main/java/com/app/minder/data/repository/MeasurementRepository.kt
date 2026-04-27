@@ -14,4 +14,5 @@ interface MeasurementRepository {
     suspend fun updateGoal(measurementGoal: MeasurementGoal)
     fun getMeasurementsByRange(typeId: String, profileId: String, start: Long): Flow<List<Measurement>>
     suspend fun saveMeasurement(measurement: MeasurementEntity)
+    fun getAllMeasurementTypes(): Flow<List<MeasurementTypeEntity>>
 }

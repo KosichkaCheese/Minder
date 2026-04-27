@@ -134,4 +134,8 @@ class MedicationRepImpl(
         }
     }
 
+    override fun getIntakesByRange(medicationId: String, start: Long): Flow<List<MedicationIntakeEntity>> {
+        return intakeDao.getIntakesByRange(medicationId, start)
+    }
+
 }

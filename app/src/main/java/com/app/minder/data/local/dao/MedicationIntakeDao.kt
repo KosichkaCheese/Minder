@@ -26,4 +26,11 @@ interface MedicationIntakeDao {
         AND createdAt <= :dayEnd
     """)
     fun getAllTodayIntakes(dayStart: Long, dayEnd: Long): Flow<List<MedicationIntakeEntity>>
+
+    @Query("""
+        SELECT * FROM medication_intake
+        WHERE medicationId = :medicationId
+        AND createdAt >= :start
+    """)
+    fun getIntakesByRange(medicationId: String, start: Long): Flow<List<MedicationIntakeEntity>>
 }

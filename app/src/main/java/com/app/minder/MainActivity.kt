@@ -30,6 +30,7 @@ import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.SwitchProfileUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthViewModel
+import com.app.minder.presentation.correlation.CorrelationViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.medList.MedListViewModel
 import com.app.minder.presentation.navigation.Screen
@@ -124,6 +125,11 @@ class MainActivity : ComponentActivity() {
                             profileRepository,
                             authRepository
                         )
+                        val correlationViewModel = CorrelationViewModel(
+                            measurementRepository,
+                            medicationRepository,
+                            profileRepository
+                        )
 
                         NavGraph(
                             navController = navController,
@@ -131,6 +137,7 @@ class MainActivity : ComponentActivity() {
                             homeViewModel = homeViewModel,
                             medListViewModel = medListViewModel,
                             profileViewModel = profileViewModel,
+                            correlationViewModel = correlationViewModel,
                             startDestination = destination,
                             saveMedicationUseCase = saveMedUseCase,
                             deleteMedicationUseCase = deleteMedUseCase,
