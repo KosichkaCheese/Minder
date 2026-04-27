@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -37,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,14 +42,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.minder.domain.model.BLOOD_PRESSURE_DIASTOLIC
 import com.app.minder.domain.model.BLOOD_PRESSURE_SYSTOLIC
-import com.app.minder.domain.model.MeasurementType
 import com.app.minder.domain.model.Trend
 import com.app.minder.presentation.components.MSurface
-import com.app.minder.presentation.components.MTextField
 import com.app.minder.presentation.components.MeasurementChart
 import com.app.minder.presentation.components.MeasurementPopupType
 import com.app.minder.presentation.components.SaveMeasurementPopup
@@ -72,18 +66,18 @@ fun MeasurementDetailScreen(
     val deviation = uiState.analysis?.deviation
 
     var isEditable by remember { mutableStateOf(false) }
-    var targetValue by remember { mutableDoubleStateOf(0.0) }
-    var targetValue2 by remember { mutableDoubleStateOf(0.0) }
+    var targetValue by remember { mutableStateOf("") }
+    var targetValue2 by remember { mutableStateOf("") }
     var showPopup by remember { mutableStateOf(false) }
-    var measurementResult by remember { mutableStateOf(0.0) }
-    var measurementResult2 by remember { mutableStateOf(0.0) }
+    var measurementResult by remember { mutableStateOf("") }
+    var measurementResult2 by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.target) {
-        targetValue = uiState.target
+        targetValue = uiState.target.toString()
     }
     LaunchedEffect(uiState.targetSecondary) {
-        targetValue2 = uiState.targetSecondary
+        targetValue2 = uiState.targetSecondary.toString()
     }
 
     Scaffold(
@@ -162,8 +156,8 @@ fun MeasurementDetailScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         TextFieldSmall(
-                                            value = targetValue.toString(),
-                                            onValueChange = { targetValue = it.toDouble() },
+                                            value = targetValue,
+                                            onValueChange = { targetValue = it },
                                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         )
                                         if (measurementTypeId == BLOOD_PRESSURE_SYSTOLIC) {
@@ -173,16 +167,16 @@ fun MeasurementDetailScreen(
                                                 style = MaterialTheme.typography.titleLarge
                                             )
                                             TextFieldSmall(
-                                                value = targetValue2.toString(),
-                                                onValueChange = { targetValue2 = it.toDouble() },
+                                                value = targetValue2,
+                                                onValueChange = { targetValue2 = it },
                                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                             )
                                         }
                                     }
                                 } else {
                                     Text(
-                                        text = if (measurementTypeId == BLOOD_PRESSURE_SYSTOLIC) "${targetValue.toInt()}/${targetValue2.toInt()}"
-                                        else targetValue.toString(),
+                                        text = if (measurementTypeId == BLOOD_PRESSURE_SYSTOLIC) "${targetValue.toDoubleOrNull() ?: "-"}/${targetValue2.toDoubleOrNull() ?: "-"}"
+                                        else targetValue.toDoubleOrNull()?.toString() ?:"-",
                                         color = ButtonNeutral,
                                         style = MaterialTheme.typography.titleLarge
                                     )
@@ -208,11 +202,11 @@ fun MeasurementDetailScreen(
                                     } else {
                                         IconButton(
                                             onClick = {
-                                                viewModel.saveGoal(measurementTypeId, targetValue)
+                                                viewModel.saveGoal(measurementTypeId, targetValue.toDoubleOrNull() ?: return@IconButton)
                                                 if (measurementTypeId == BLOOD_PRESSURE_SYSTOLIC) {
                                                     viewModel.saveGoal(
                                                         BLOOD_PRESSURE_DIASTOLIC,
-                                                        targetValue2
+                                                        targetValue2.toDoubleOrNull() ?: return@IconButton
                                                     )
                                                 }
                                                 isEditable = false
@@ -443,14 +437,14 @@ fun MeasurementDetailScreen(
                 submitText = " Ок ",
                 onDismiss = { showPopup = false },
                 onSubmit = {
-                                viewModel.saveMeasurement(measurementResult, note, measurementResult2)
+                                viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note, measurementResult2.toDoubleOrNull() ?: return@SaveMeasurementPopup)
                                 showPopup = false
                            },
                 value1 = measurementResult.toString(),
                 value2 = measurementResult2.toString(),
                 noteValue = note,
-                onValue1Change = { measurementResult = it.toDouble() },
-                onValue2Change = { measurementResult2 = it.toDouble() },
+                onValue1Change = { measurementResult = it },
+                onValue2Change = { measurementResult2 = it },
                 onNoteChange = { note = it },
                 unit = uiState.type?.unit ?: "",
                 type = MeasurementPopupType.TWO_FIELDS
@@ -465,12 +459,12 @@ fun MeasurementDetailScreen(
                 submitText = " Ок ",
                 onDismiss = { showPopup = false },
                 onSubmit = {
-                                viewModel.saveMeasurement(measurementResult, note)
+                                viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note)
                                 showPopup = false
                            },
                 value1 = measurementResult.toString(),
                 noteValue = note,
-                onValue1Change = { measurementResult = it.toDouble() },
+                onValue1Change = { measurementResult = it },
                 onNoteChange = { note = it },
                 type = MeasurementPopupType.SLIDER
             );
@@ -484,12 +478,12 @@ fun MeasurementDetailScreen(
                 submitText = " Ок ",
                 onDismiss = { showPopup = false },
                 onSubmit = {
-                    viewModel.saveMeasurement(measurementResult, note)
+                    viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note)
                     showPopup = false
                 },
                 value1 = measurementResult.toString(),
                 noteValue = note,
-                onValue1Change = { measurementResult = it.toDouble() },
+                onValue1Change = { measurementResult = it },
                 onNoteChange = { note = it },
                 unit = uiState.type?.unit ?: "",
                 type = MeasurementPopupType.ONE_FIELD
