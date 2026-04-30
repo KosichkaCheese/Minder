@@ -1,11 +1,13 @@
 package com.app.minder.util.notifications
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -27,7 +29,35 @@ class NotificationScheduler(
         const val STOCK_CHANNEL_ID = "stock_reminders"
     }
 
-    private fun calculateInitialDelay(schedule: MedicationSchedule): Long{
+    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    private fun createPendingIntent(
+        medicationId: String,
+        scheduleId: String,
+        medicationName: String,
+        timeMinutes: Int,
+        dayOfWeek: Int?,
+        flags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    ): PendingIntent {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("medicationId", medicationId)
+            putExtra("medicationName", medicationName)
+            putExtra("timeMinutes", timeMinutes)
+            putExtra("scheduleId", scheduleId)
+            putExtra("dayOfWeek", dayOfWeek ?: -1)
+        }
+
+        val requestCode = (medicationId + scheduleId).hashCode()
+
+        return PendingIntent.getBroadcast(
+            context,
+            requestCode,
+            intent,
+            flags
+        )
+    }
+
+    private fun calculateTriggerTime(schedule: MedicationSchedule): Long{
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, schedule.timeMinutes / 60)
@@ -36,9 +66,8 @@ class NotificationScheduler(
             set(Calendar.MILLISECOND, 0)
 
             schedule.dayOfWeek?.let { dayOfWeek ->
-                val calendarDayOfWeek = if (dayOfWeek == 7) Calendar.SUNDAY else dayOfWeek + 1
-                set(Calendar.DAY_OF_WEEK, calendarDayOfWeek)
-
+                val calendarDay = if (dayOfWeek == 7) Calendar.SUNDAY else dayOfWeek + 1
+                set(Calendar.DAY_OF_WEEK, calendarDay)
                 if (timeInMillis <= now.timeInMillis) {
                     add(Calendar.WEEK_OF_YEAR, 1)
                 }
@@ -49,51 +78,59 @@ class NotificationScheduler(
             }
         }
 
-        return target.timeInMillis - now.timeInMillis
+        return target.timeInMillis
     }
 
-    private fun scheduleReminder(
+    private fun scheduleAlarm(
         medicationId: String,
         medicationName: String,
         schedule: MedicationSchedule
-    ) {
-        val inputData = workDataOf(
-            "medicationId" to medicationId,
-            "medicationName" to medicationName,
-            "timeMinutes" to schedule.timeMinutes,
+    ){
+        val pendingIntent = createPendingIntent(
+            medicationId = medicationId,
+            scheduleId = schedule.id,
+            medicationName = medicationName,
+            timeMinutes = schedule.timeMinutes,
+            dayOfWeek = schedule.dayOfWeek
         )
-        val initialDelay = calculateInitialDelay(schedule)
 
-        val workRequest = if (schedule.dayOfWeek==null) {
-            PeriodicWorkRequestBuilder<MedicationReminderWorker>(1, TimeUnit.DAYS)
-                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-                .setInputData(inputData)
-                .addTag("medication_$medicationId")
-                .addTag("schedule_${schedule.id}")
-                .build()
-        } else {
-            PeriodicWorkRequestBuilder<MedicationReminderWorker>(7, TimeUnit.DAYS)
-                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-                .setInputData(inputData)
-                .addTag("medication_$medicationId")
-                .addTag("schedule_${schedule.id}")
-                .build()
+        val triggerTime = calculateTriggerTime(schedule)
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+                Log.w("NotificationScheduler", "No exact alarm permission, using inexact")
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            }
+        } catch (e: SecurityException) {
+            Log.e("NotificationScheduler", "SecurityException: ${e.message}")
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerTime,
+                pendingIntent
+            )
         }
 
-        WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                "medication_${medicationId}_${schedule.id}",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest
-            )
     }
 
-    fun cancelMedicationReminders(medicationId: String) {
-        WorkManager.getInstance(context)
-            .cancelAllWorkByTag("medication_$medicationId")
+    suspend fun cancelMedicationReminders(medicationId: String) {
+        val schedules = medicationRep.getScheduleByMedication(medicationId).first()
+        schedules.forEach { schedule ->
+            val pendingIntent = createPendingIntent(medicationId, schedule.id, "", 0, null)
+            alarmManager.cancel(pendingIntent)
+        }
     }
 
-    fun scheduleMedicationReminders(
+    suspend fun scheduleMedicationReminders(
         medicationId: String,
         medicationName: String,
         schedules: List<MedicationSchedule>
@@ -101,7 +138,7 @@ class NotificationScheduler(
         cancelMedicationReminders(medicationId)
 
         schedules.forEach { schedule ->
-            scheduleReminder(medicationId, medicationName, schedule)
+            scheduleAlarm(medicationId, medicationName, schedule)
         }
     }
 

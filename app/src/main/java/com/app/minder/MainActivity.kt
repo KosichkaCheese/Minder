@@ -1,6 +1,11 @@
 package com.app.minder
 
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -30,6 +35,7 @@ import com.app.minder.domain.usecase.SaveMedUseCase
 import com.app.minder.domain.usecase.SwitchProfileUseCase
 import com.app.minder.domain.usecase.TakeMedicationUseCase
 import com.app.minder.presentation.auth.AuthViewModel
+import com.app.minder.presentation.components.PopupDialog
 import com.app.minder.presentation.correlation.CorrelationViewModel
 import com.app.minder.presentation.home.HomeViewModel
 import com.app.minder.presentation.medList.MedListViewModel
@@ -37,13 +43,19 @@ import com.app.minder.presentation.navigation.Screen
 import com.app.minder.presentation.navigation.NavGraph
 import com.app.minder.presentation.profile.ProfileViewModel
 import com.app.minder.presentation.theme.Background
+import com.app.minder.presentation.theme.ButtonNeutral
 import com.app.minder.presentation.theme.MedTheme
 import com.app.minder.presentation.theme.OnContainer
 import com.app.minder.util.notifications.NotificationScheduler
+import com.app.minder.util.permissions.OSBasedRequestHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.core.content.edit
+import com.app.minder.util.permissions.RequestOSBasedPermissions
 
 class MainActivity : ComponentActivity() {
+    private var showAlarmPermissionDialog = mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
@@ -52,6 +64,12 @@ class MainActivity : ComponentActivity() {
             )
         )
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                showAlarmPermissionDialog.value = true
+            }
+        }
 
         val database = MedDB.getDB(applicationContext)
         val authRepository = AuthRepImpl(
@@ -95,6 +113,44 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MedTheme {
+                if (showAlarmPermissionDialog.value) {
+                    PopupDialog(
+                        onSubmit = {
+                            showAlarmPermissionDialog.value = false
+                            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                        },
+                        onDismiss = {
+                            showAlarmPermissionDialog.value = false
+                        },
+                        backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
+                        textColor = MaterialTheme.colorScheme.onSurface,
+                        dismissColor = MaterialTheme.colorScheme.background,
+                        submitColor = ButtonNeutral,
+                        title = "Разрешить точные напоминания?",
+                        text = "Для того чтобы напоминания о приеме лекарств " +
+                                "приходили точно в назначенное время, приложению " +
+                                "необходимо разрешение на точные уведомления.\n\n" +
+                                "Без этого разрешения напоминания могут приходить " +
+                                "с задержкой или не приходить вовсе."
+                    )
+                }
+
+                var showBatteryDialog by remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) {
+                    val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+                    val alreadyShown = prefs.getBoolean("battery_dialog_shown", false)
+
+                    if (!alreadyShown && OSBasedRequestHelper.needsManufacturerSettings()) {
+                        showBatteryDialog = true
+                        prefs.edit { putBoolean("battery_dialog_shown", true) }
+                    }
+                }
+                if (showBatteryDialog) {
+                    RequestOSBasedPermissions(
+                        onDismiss = { showBatteryDialog = false }
+                    )
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
