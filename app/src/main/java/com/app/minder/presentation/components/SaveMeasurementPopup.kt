@@ -209,7 +209,7 @@ fun SaveMeasurementPopup(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Slider(
-                        value = value1.toFloat(),
+                        value = value1.toFloatOrNull() ?: 0f,
                         onValueChange = {onValue1Change(it.toString())},
                         valueRange = 0f..10f,
                         steps = 9,
@@ -228,7 +228,7 @@ fun SaveMeasurementPopup(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "%.2f".format(value1.toFloat()),
+                        text = "%.2f".format(value1.toFloatOrNull() ?: 0f),
                         style = MaterialTheme.typography.bodyLarge,
                         color = textColor,
                         textAlign = TextAlign.Center
