@@ -63,6 +63,7 @@ import com.app.minder.domain.model.Timing
 import com.app.minder.presentation.components.MButton
 import com.app.minder.presentation.components.MSurface
 import com.app.minder.presentation.components.MTextField
+import com.app.minder.presentation.components.PopupDialog
 import com.app.minder.presentation.components.TimePickerDialog
 import com.app.minder.presentation.components.TopBar
 import com.app.minder.presentation.theme.*
@@ -101,6 +102,7 @@ fun MedDetailScreen(
     var selectedTimes by remember { mutableStateOf(emptyList<String>()) }
     var editTimeIndex by remember {mutableStateOf<Int?>(null)}
     var showTimePickerDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.medication) {
         uiState.medication?.let { med ->
@@ -197,8 +199,7 @@ fun MedDetailScreen(
                                     disabledContentColor = OnContainerError
                                 ),
                                 onClick = {
-                                    viewModel.deleteMedication()
-                                    onBack()
+                                    showDeleteDialog = true
                                 }
                             ) {
                                 Icon(
@@ -640,6 +641,24 @@ fun MedDetailScreen(
                 showPermissionDialog = false
                 saveMedication()
             }
+        )
+    }
+
+    if (showDeleteDialog){
+        PopupDialog(
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            textColor = MaterialTheme.colorScheme.onTertiary,
+            submitColor = MaterialTheme.colorScheme.onTertiary,
+            dismissColor = TertiaryVariant,
+            title = "Удалить лекарство?",
+            text = "Вы уверены, что хотите удалить это лекарство?",
+            onDismiss = { showDeleteDialog = false },
+            onSubmit = {
+                showDeleteDialog = false
+                viewModel.deleteMedication()
+                onBack()
+            }
+
         )
     }
 }
