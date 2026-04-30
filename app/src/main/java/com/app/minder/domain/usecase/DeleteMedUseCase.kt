@@ -9,9 +9,9 @@ class DeleteMedUseCase(
 ) {
     suspend operator fun invoke(medicationId: String): Result<Unit>{
         return try {
-            medicationRep.deleteMedication(medicationId)
-
             notificationScheduler.cancelMedicationReminders(medicationId)
+
+            medicationRep.deleteMedication(medicationId)
 
             Result.success(Unit)
         } catch (e: Exception) {
