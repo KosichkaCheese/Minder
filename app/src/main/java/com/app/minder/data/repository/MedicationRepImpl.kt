@@ -106,7 +106,12 @@ class MedicationRepImpl(
         schedules: List<MedicationSchedule>
     ) {
         database.withTransaction {
-            medicationDao.insertMedication(medication.toEntity())
+            val existing = medicationDao.getMedicationByIdSync(medication.id)
+            if (existing != null) {
+                medicationDao.updateMedication(medication.toEntity())
+            } else {
+                medicationDao.insertMedication(medication.toEntity())
+            }
 
             scheduleDao.deleteByMedication(medication.id)
 
