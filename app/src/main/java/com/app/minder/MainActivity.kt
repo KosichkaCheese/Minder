@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MedTheme {
-                if (showAlarmPermissionDialog.value) {
+                if (showAlarmPermissionDialog.value && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     PopupDialog(
                         onSubmit = {
                             showAlarmPermissionDialog.value = false
