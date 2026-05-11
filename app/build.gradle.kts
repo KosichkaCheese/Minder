@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.compose.m3)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     ksp("androidx.room:room-compiler:2.8.4")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")

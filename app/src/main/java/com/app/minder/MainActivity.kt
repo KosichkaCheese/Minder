@@ -51,6 +51,8 @@ import com.app.minder.util.permissions.OSBasedRequestHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import com.app.minder.data.remote.Client
+import com.app.minder.util.dataStore
 import com.app.minder.util.permissions.RequestOSBasedPermissions
 
 class MainActivity : ComponentActivity() {
@@ -72,14 +74,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val database = MedDB.getDB(applicationContext)
-        val authRepository = AuthRepImpl(
-            database.userDao(),
-            database.profileDao(),
-            database,
-            applicationContext
-        )
-        val loginUseCase = LoginUseCase(authRepository)
-        val registerUseCase = RegisterUseCase(authRepository)
+        val api = Client.createApi(dataStore)
         val medicationRepository = MedicationRepImpl(
             medicationDao = database.medicationDao(),
             scheduleDao = database.medicationScheduleDao(),
@@ -96,9 +91,19 @@ class MainActivity : ComponentActivity() {
             measurementTypeDao = database.measurementTypeDao(),
             database = database
         )
-
         val notificationScheduler = NotificationScheduler(applicationContext, medicationRepository)
+        val authRepository = AuthRepImpl(
+            api,
+            database.userDao(),
+            database.profileDao(),
+            database.medicationDao(),
+            database,
+            dataStore,
+            notificationScheduler
+            )
 
+        val loginUseCase = LoginUseCase(authRepository)
+        val registerUseCase = RegisterUseCase(authRepository)
         val getTodayIntakesUseCase = GetTodayIntakesUseCase(medicationRepository, profileRepository)
         val getMedsUseCase = GetMedsUseCase(medicationRepository, profileRepository)
         val deleteMedUseCase = DeleteMedUseCase(medicationRepository, notificationScheduler)

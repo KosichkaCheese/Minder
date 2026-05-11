@@ -25,7 +25,6 @@ class AuthRepMock : AuthRepository {
         val authToken = AuthToken(
             accessToken = "mock_token_${UUID.randomUUID()}",
             refreshToken = null,
-            expiresAt = System.currentTimeMillis() + 86400000 // 24 часа
         )
 
         currentUser = user
@@ -47,7 +46,6 @@ class AuthRepMock : AuthRepository {
         val authToken = AuthToken(
             accessToken = "mock_token_${UUID.randomUUID()}",
             refreshToken = null,
-            expiresAt = System.currentTimeMillis() + 86400000
         )
 
         currentUser = user

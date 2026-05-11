@@ -22,6 +22,9 @@ interface MedicationDao {
     @Query("SELECT * FROM medications WHERE profileId = :profileId")
     fun getMedicationsByProfile(profileId: String): Flow<List<MedicationEntity>>
 
+    @Query("SELECT * FROM medications WHERE profileId = :profileId")
+    suspend fun getMedicationsByProfileSync(profileId: String): List<MedicationEntity>
+
     @Query("SELECT * FROM medications WHERE id = :id")
     fun getMedicationById(id: String): Flow<MedicationEntity?>
 
