@@ -22,10 +22,10 @@ interface ProfileDao {
     @Query("SELECT * FROM profiles WHERE userId=:userId AND isDefault=1 LIMIT 1")
     suspend fun getDefaultProfile(userId: String): ProfileEntity?
 
-    @Query("SELECT * FROM profiles WHERE userId in (SELECT userId FROM users WHERE isCurrent=1) AND isCurrent=1")
+    @Query("SELECT * FROM profiles WHERE userId in (SELECT id FROM users WHERE isCurrent=1) AND isCurrent=1")
     fun getCurrentProfile(): Flow<ProfileEntity?>
 
-    @Query("SELECT * FROM profiles WHERE userId in (SELECT userId FROM users WHERE isCurrent=1)")
+    @Query("SELECT * FROM profiles WHERE userId in (SELECT id FROM users WHERE isCurrent=1)")
     fun getProfilesByUser(): Flow<List<ProfileEntity>>
 
     @Query("SELECT * from profiles WHERE id=:id")
