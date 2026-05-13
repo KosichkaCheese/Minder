@@ -2,6 +2,7 @@ package com.app.minder.presentation.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,9 +81,10 @@ fun ProfileScreen(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize().padding(start = 16.dp, bottom = 0.dp, end = 16.dp, top = 16.dp),
+            .fillMaxSize().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
         item {
             MSurface(

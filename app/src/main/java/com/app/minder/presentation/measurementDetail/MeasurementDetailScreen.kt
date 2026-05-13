@@ -95,11 +95,11 @@ fun MeasurementDetailScreen(
                 )
             }
         }
-    ) { paddingValues ->
+    ) { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding(), start = 10.dp, end=10.dp),
+                .padding(start = 10.dp, end=10.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (uiState.loading) {

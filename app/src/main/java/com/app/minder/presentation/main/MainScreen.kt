@@ -286,7 +286,7 @@ fun FloatingActionButtonMenu(
                 contentColor = onMint,
                 elevation = FloatingActionButtonDefaults.elevation(1.dp, 0.dp),
                 shape = RoundedCornerShape(30.dp),
-                modifier = Modifier.padding(0.dp, 4.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
                 Text(
                     text = "Список лекарств",
@@ -300,7 +300,7 @@ fun FloatingActionButtonMenu(
                 contentColor = onMint,
                 elevation = FloatingActionButtonDefaults.elevation(1.dp, 0.dp),
                 shape = RoundedCornerShape(30.dp),
-                modifier = Modifier.padding(0.dp, 4.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
                 Text(
                     text="Добавить",

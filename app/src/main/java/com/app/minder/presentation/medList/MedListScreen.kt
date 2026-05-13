@@ -33,7 +33,7 @@ fun MedListScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize().padding(start = 16.dp, bottom = 0.dp, end = 16.dp, top = 0.dp),
+            .fillMaxSize().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ){
