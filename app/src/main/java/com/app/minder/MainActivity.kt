@@ -99,7 +99,8 @@ class MainActivity : ComponentActivity() {
             database.medicationDao(),
             database,
             dataStore,
-            notificationScheduler
+            notificationScheduler,
+            applicationContext
             )
 
         val loginUseCase = LoginUseCase(authRepository)
@@ -180,6 +181,7 @@ class MainActivity : ComponentActivity() {
                         val homeViewModel = HomeViewModel(getTodayIntakesUseCase)
                         val medListViewModel = MedListViewModel(getMedsUseCase)
                         val profileViewModel = ProfileViewModel(
+                            api,
                             getCurrentProfileUseCase,
                             switchProfileUseCase,
                             createProfileUseCase,

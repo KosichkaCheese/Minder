@@ -1,5 +1,7 @@
 package com.app.minder.data.repository
 
+import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -12,6 +14,7 @@ import com.app.minder.data.local.entity.ProfileEntity
 import com.app.minder.data.local.entity.UserEntity
 import com.app.minder.data.local.entity.toDomain
 import com.app.minder.data.remote.Api
+import com.app.minder.data.remote.dto.DeviceTokenRequest
 import com.app.minder.data.remote.dto.Login
 import com.app.minder.data.remote.dto.Register
 import com.app.minder.domain.model.User
@@ -19,9 +22,14 @@ import com.app.minder.domain.model.AuthResponse
 import com.app.minder.domain.model.AuthToken
 import com.app.minder.util.PreferencesKeys
 import com.app.minder.util.notifications.NotificationScheduler
+import com.app.minder.util.notifications.hasGooglePlayServices
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class AuthRepImpl (
@@ -31,7 +39,8 @@ class AuthRepImpl (
     private val medicationDao: MedicationDao,
     private val database: MedDB,
     private val dataStore: DataStore<Preferences>,
-    private val notificationScheduler: NotificationScheduler
+    private val notificationScheduler: NotificationScheduler,
+    private val context: Context
 ): AuthRepository {
 
     override suspend fun register(email: String, name: String, password: String): Result<AuthResponse> {
@@ -65,6 +74,26 @@ class AuthRepImpl (
                 userDao.insertUser(user)
                 profileDao.clearCurrentProfile()
                 profileDao.insertProfile(profile)
+            }
+
+            if (hasGooglePlayServices(context)) {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.w("Auth", "FCM token failed", task.exception)
+                        return@addOnCompleteListener
+                    }
+
+                    val fcmToken = task.result
+                    Log.d("Auth", "FCM token: $fcmToken")
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            api.saveDeviceToken(DeviceTokenRequest(fcmToken))
+                        } catch (e: Exception) {
+                            Log.e("Auth", "Failed to save FCM token: ${e.message}")
+                        }
+                    }
+                }
             }
 
             Result.success(AuthResponse(user.toDomain(), AuthToken(response.accessToken, response.refreshToken)))
@@ -125,6 +154,26 @@ class AuthRepImpl (
             val currentProfile = profileDao.getCurrentProfile().first()
             currentProfile?.let {
                 notificationScheduler.rescheduleReminders(it.id)
+            }
+
+            if (hasGooglePlayServices(context)) {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.w("Auth", "FCM token failed", task.exception)
+                        return@addOnCompleteListener
+                    }
+
+                    val fcmToken = task.result
+                    Log.d("Auth", "FCM token: $fcmToken")
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            api.saveDeviceToken(DeviceTokenRequest(fcmToken))
+                        } catch (e: Exception) {
+                            Log.e("Auth", "Failed to save FCM token: ${e.message}")
+                        }
+                    }
+                }
             }
 
             Result.success(AuthResponse(user.toDomain(), AuthToken(response.accessToken, response.refreshToken)))

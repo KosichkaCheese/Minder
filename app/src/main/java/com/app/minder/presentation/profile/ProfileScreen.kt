@@ -1,5 +1,6 @@
 package com.app.minder.presentation.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,9 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -20,7 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,8 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.app.minder.data.remote.dto.UserResponse
 import com.app.minder.presentation.components.MButton
 import com.app.minder.presentation.components.MSurface
 import com.app.minder.presentation.components.PopupWithField
@@ -63,21 +71,11 @@ fun ProfileScreen(
     var showAccept by remember { mutableStateOf(false) }
     var showInvite by remember { mutableStateOf(false) }
 
-    var linkedName by remember { mutableStateOf("") }
-    var linkedEmail by remember { mutableStateOf("") }
+    var selectedUser by remember { mutableStateOf<UserResponse?>(null) }
     var newProfileName by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
-    var inviteCode = "C6G2KL"
 
-    val observerList = listOf(
-        LinkedUser("Observer user", "observer@example.com"),
-        LinkedUser("Another observer user", "another_observer@example.com"),
-        LinkedUser("Another observer user", "another_observer@example.com")
-    )
-    val patientList = listOf(
-        LinkedUser("Patient user", "patient@example.com"),
-        LinkedUser("Another patient user", "another_patient@example.com")
-    )
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -178,57 +176,98 @@ fun ProfileScreen(
             MSurface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
+                if (uiState.isLinksLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
+                } else if (uiState.error != null && uiState.observers.isEmpty() && uiState.patients.isEmpty()) {
                     Column(
-                        modifier = Modifier.width(165.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Наблюдатели",
-                            color = onTertiaryVariant,
-                            style = MaterialTheme.typography.titleLarge
+                            text = uiState.error ?: "",
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
                         )
-
-                        observerList.forEach { observer ->
-                            LinkedUserCard(
-                                name = observer.name,
-                                email = observer.email,
-                                onDelete = {
-                                    linkedName = observer.name
-                                    linkedEmail = observer.email
-                                    showUnlinkObserver = true
-                                }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        MButton(
+                            text = "Повторить",
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = MaterialTheme.colorScheme.background,
+                            onClick = { viewModel.loadLinkedUsers() }
+                        )
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(
+                            modifier = Modifier.width(165.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = "Наблюдатели",
+                                color = onTertiaryVariant,
+                                style = MaterialTheme.typography.titleLarge
                             )
+
+                            if (uiState.observers.isEmpty()) {
+                                Text(
+                                    text = "Нет наблюдателей",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            } else {
+                                uiState.observers.forEach { observer ->
+                                    LinkedUserCard(
+                                        name = observer.name,
+                                        email = observer.email,
+                                        onDelete = {
+                                            selectedUser = observer
+                                            showUnlinkObserver = true
+                                        }
+                                    )
+                                }
+                            }
+
                         }
 
-                    }
-
-                    Column(
-                        modifier = Modifier.width(165.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text(
-                            text = "Пациенты",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        patientList.forEach { patient ->
-                            LinkedUserCard(
-                                name = patient.name,
-                                email = patient.email,
-                                onDelete = {
-                                    linkedName = patient.name
-                                    linkedEmail = patient.email
-                                    showUnlinkPatient = true
-                                }
+                        Column(
+                            modifier = Modifier.width(165.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = "Пациенты",
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.titleLarge
                             )
+
+                            if (uiState.patients.isEmpty()) {
+                                Text(
+                                    text = "Нет пациентов",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            } else {
+                                uiState.patients.forEach { patient ->
+                                    LinkedUserCard(
+                                        name = patient.name,
+                                        email = patient.email,
+                                        onDelete = {
+                                            selectedUser = patient
+                                            showUnlinkPatient = true
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -242,7 +281,10 @@ fun ProfileScreen(
             ) {
                 MButton(
                     text = "Пригласить\nнаблюдателя",
-                    onClick = {showInvite = true},
+                    onClick = {
+                        viewModel.createInvitation()
+                        showInvite = true
+                              },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.surfaceContainer,
                     textStyle = MaterialTheme.typography.bodyLarge
@@ -273,6 +315,7 @@ fun ProfileScreen(
             onDismiss = {showCreateProfile = false},
             onSubmit = {
                 viewModel.createProfile(newProfileName)
+                newProfileName = ""
                 showCreateProfile = false
             },
             value = newProfileName,
@@ -291,6 +334,7 @@ fun ProfileScreen(
             " а также несинхронизированные данные.",
             onSubmit = {
                 viewModel.logout()
+                showLeave = false
                 onLogout()
             },
             onDismiss = {showLeave = false}
@@ -298,31 +342,47 @@ fun ProfileScreen(
     }
 
     if (showUnlinkObserver) {
-        PopupDialog(
-            backgroundColor = MaterialTheme.colorScheme.tertiary,
-            textColor = OnContainerError,
-            submitColor = OnContainerError,
-            dismissColor = TertiaryVariant,
-            title = "Отвязать пользователя",
-            text = "Вы уверены, что хотите отвязать наблюдаетля $linkedName ($linkedEmail)? Пользователь перестанет" +
-            " получать уведомления о Ваших пропусках лекарств и измерениях.",
-            onSubmit = {},
-            onDismiss = {showUnlinkObserver = false}
-        )
+        selectedUser?.let { user ->
+            PopupDialog(
+                backgroundColor = MaterialTheme.colorScheme.tertiary,
+                textColor = OnContainerError,
+                submitColor = OnContainerError,
+                dismissColor = TertiaryVariant,
+                title = "Отвязать пользователя",
+                text = "Вы уверены, что хотите отвязать наблюдаетля ${user.name} (${user.email})? Пользователь перестанет" +
+                        " получать уведомления о Ваших пропусках лекарств.",
+                onSubmit = {
+                    viewModel.removeLink(
+                        patientId = uiState.user?.id ?: "",
+                        observerId = user.id,
+                        onSuccess = { showUnlinkObserver = false }
+                    )
+                },
+                onDismiss = { showUnlinkObserver = false }
+            )
+        }
     }
 
     if (showUnlinkPatient) {
-        PopupDialog(
-            backgroundColor = MaterialTheme.colorScheme.tertiary,
-            textColor = OnContainerError,
-            submitColor = OnContainerError,
-            dismissColor = TertiaryVariant,
-            title = "Отвязать пользователя",
-            text = "Вы уверены, что хотите отвязать пациента $linkedName ($linkedEmail)? Вы перестанете" +
-                    " получать уведомления о его пропусках лекарств и измерениях.",
-            onSubmit = {},
-            onDismiss = {showUnlinkPatient = false}
-        )
+        selectedUser?.let { user ->
+            PopupDialog(
+                backgroundColor = MaterialTheme.colorScheme.tertiary,
+                textColor = OnContainerError,
+                submitColor = OnContainerError,
+                dismissColor = TertiaryVariant,
+                title = "Отвязать пользователя",
+                text = "Вы уверены, что хотите отвязать пациента ${user.name} (${user.email})? Вы перестанете" +
+                        " получать уведомления о его пропусках лекарств.",
+                onSubmit = {
+                    viewModel.removeLink(
+                        patientId = user.id,
+                        observerId = uiState.user?.id ?: "",
+                        onSuccess = { showUnlinkPatient = false }
+                    )
+                },
+                onDismiss = { showUnlinkPatient = false }
+            )
+        }
     }
 
     if (showAccept) {
@@ -332,12 +392,17 @@ fun ProfileScreen(
             submitColor = onMint,
             dismissColor = MintUnfocus,
             title = "Принять приглашение",
-            text = "Введите код приглашения пользователья, чтобы стать его наблюдателем.\n" +
+            text = "Введите код приглашения пользователя, чтобы стать его наблюдателем.\n" +
                     " Вы будете получать уведомления, когда пользователь пропускает прием\n" +
-                    " лекарств или его результаты измерений становятся опасными.",
+                    " лекарств",
             submitText = "Принять",
             onDismiss = {showAccept = false},
-            onSubmit = {},
+            onSubmit = {
+                viewModel.acceptInvitation(code) {
+                    code = ""
+                    showAccept = false
+                }
+            },
             value = code,
             onValueChange = {code = it}
         )
@@ -351,12 +416,18 @@ fun ProfileScreen(
             dismissColor = MintUnfocus,
             title = "Пригласить наблюдателя",
             text = "Сообщите этот код другому пользователю, чтобы он смог получать \n" +
-                    "уведомления, когда Вы пропускаете прием лекарств или Ваши результаты\n" +
-                    " измерений становятся опасными. Код действителен 24 часа, после этого\n" +
+                    "уведомления, когда Вы пропускаете прием лекарств.\n" +
+                    " Код действителен 24 часа, после этого\n" +
                     " для принятия приглашения нужно будет получить новый.",
-            value = inviteCode,
+            value = if (uiState.isLoading) "Загрузка..." else uiState.inviteCode ?: "Ошибка",
             onDismiss = {showInvite = false}
         )
+    }
+
+    uiState.error?.let { error ->
+        LaunchedEffect(error) {
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
     }
 
 }

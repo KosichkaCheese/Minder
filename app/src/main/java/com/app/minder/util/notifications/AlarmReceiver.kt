@@ -33,6 +33,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
                 if (!isMedicationTaken(context, medicationId, timeMinutes)) {
                     showNotification(context, medicationId, medicationName, timeMinutes)
+                    scheduleMissedCheck(context, medicationId, medicationName, timeMinutes)
                 }
                 scheduleNext(
                     context,
@@ -46,6 +47,36 @@ class AlarmReceiver: BroadcastReceiver() {
                 pendingResult.finish()
             }
         }
+    }
+
+    private fun scheduleMissedCheck(
+        context: Context,
+        medicationId: String,
+        medicationName: String,
+        timeMinutes: Int
+    ) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, MissedCheckReceiver::class.java).apply {
+            putExtra("medicationId", medicationId)
+            putExtra("medicationName", medicationName)
+            putExtra("timeMinutes", timeMinutes)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            "missed_$medicationId$timeMinutes".hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val triggerTime = System.currentTimeMillis() + 30 * 60 * 1000L
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            pendingIntent
+        )
     }
 
     private fun scheduleNext(

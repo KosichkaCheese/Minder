@@ -1,6 +1,5 @@
 package com.app.minder.data.repository
 
-import android.util.Log
 import androidx.room.withTransaction
 import com.app.minder.data.local.dao.MedicationDao
 import com.app.minder.data.local.dao.MedicationIntakeDao
@@ -53,11 +52,9 @@ class MedicationRepImpl(
                     ?: continue
 
                 val intakes = allIntakes.filter{it.medicationId==medication.id}
-                Log.d("GetTodayIntakes", "Schedule time: ${schedule.timeMinutes}")
                 intakes.forEach { intake ->
                     val intakeMinutes = ((intake.createdAt - dayStart) / 60000).toInt()
                     val diff = kotlin.math.abs(intakeMinutes - schedule.timeMinutes)
-                    Log.d("GetTodayIntakes", "Intake at $intakeMinutes, diff: $diff")
                 }
 
                 val intake = intakes.find{ intake ->

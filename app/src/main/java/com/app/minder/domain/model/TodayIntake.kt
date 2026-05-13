@@ -1,7 +1,6 @@
 package com.app.minder.domain.model
 
 import android.icu.util.Calendar
-import android.util.Log
 
 data class TodayIntake(
     val scheduleId: String,
@@ -22,8 +21,6 @@ data class TodayIntake(
             val now = System.currentTimeMillis()
             val offset = java.util.TimeZone.getDefault().getOffset(now)
             val todayMinutes = ((now + offset) % 86400000) / 60000
-            Log.i("TimeNow", todayMinutes.toString())
-            Log.i("NeedTime", timeMinutes.toString())
 
             return when {
                 isTaken -> IntakeStatus.TAKEN

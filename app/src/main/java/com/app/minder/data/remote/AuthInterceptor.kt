@@ -3,8 +3,8 @@ package com.app.minder.data.remote
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.app.minder.data.remote.dto.RefreshRequest
+import com.app.minder.util.PreferencesKeys
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -15,7 +15,7 @@ class AuthInterceptor (
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
-            dataStore.data.first()[stringPreferencesKey("access_token")]
+            dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN]
         }
 
         val request = if (token != null) {
@@ -46,7 +46,7 @@ class AuthInterceptor (
     private fun refreshToken(): String? {
         return try {
             val refreshToken = runBlocking {
-                dataStore.data.first()[stringPreferencesKey("refresh_token")]
+                dataStore.data.first()[PreferencesKeys.REFRESH_TOKEN]
             } ?: return null
 
             val refreshApi = Client.createRefreshApi(dataStore)
@@ -56,8 +56,8 @@ class AuthInterceptor (
 
             runBlocking {
                 dataStore.edit { preferences ->
-                    preferences[stringPreferencesKey("access_token")] = response.accessToken
-                    preferences[stringPreferencesKey("refresh_token")] = response.refreshToken
+                    preferences[PreferencesKeys.ACCESS_TOKEN] = response.accessToken
+                    preferences[PreferencesKeys.REFRESH_TOKEN] = response.refreshToken
                 }
             }
 
@@ -65,8 +65,8 @@ class AuthInterceptor (
         } catch (e: Exception){
             runBlocking {
                 dataStore.edit { prefs ->
-                    prefs.remove(stringPreferencesKey("access_token"))
-                    prefs.remove(stringPreferencesKey("refresh_token"))
+                    prefs.remove(PreferencesKeys.ACCESS_TOKEN)
+                    prefs.remove(PreferencesKeys.REFRESH_TOKEN)
                 }
             }
             null

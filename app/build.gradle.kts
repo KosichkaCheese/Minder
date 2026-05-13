@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -62,6 +63,8 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.firebase.messaging)
+    implementation(libs.play.services.base)
     ksp("androidx.room:room-compiler:2.8.4")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
@@ -69,6 +72,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.2.0")
     // bcrypt для паролей
     implementation("org.mindrot:jbcrypt:0.4")
+
+    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
