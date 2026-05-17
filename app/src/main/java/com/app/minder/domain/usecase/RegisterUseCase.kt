@@ -1,6 +1,6 @@
 package com.app.minder.domain.usecase
 
-import com.app.minder.data.repository.AuthRepository
+import com.app.minder.domain.interfaces.AuthRepository
 import com.app.minder.domain.model.AuthResponse
 
 class RegisterUseCase (

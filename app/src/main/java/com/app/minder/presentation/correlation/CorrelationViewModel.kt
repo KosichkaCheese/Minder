@@ -3,9 +3,9 @@ package com.app.minder.presentation.correlation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.minder.data.local.entity.MeasurementTypeEntity
-import com.app.minder.data.repository.MeasurementRepository
-import com.app.minder.data.repository.MedicationRepository
-import com.app.minder.data.repository.ProfileRepository
+import com.app.minder.domain.interfaces.MeasurementRepository
+import com.app.minder.domain.interfaces.MedicationRepository
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.model.Medication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

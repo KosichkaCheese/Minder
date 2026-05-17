@@ -1,6 +1,5 @@
 package com.app.minder.presentation.medList
 
-import androidx.compose.runtime.MutableState
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.usecase.GetMedsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

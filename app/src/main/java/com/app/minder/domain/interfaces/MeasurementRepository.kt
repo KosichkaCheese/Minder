@@ -1,4 +1,4 @@
-package com.app.minder.data.repository
+package com.app.minder.domain.interfaces
 
 import com.app.minder.data.local.entity.MeasurementEntity
 import com.app.minder.data.local.entity.MeasurementGoalEntity

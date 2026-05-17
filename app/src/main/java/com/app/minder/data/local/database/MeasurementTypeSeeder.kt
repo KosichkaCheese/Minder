@@ -4,7 +4,7 @@ import com.app.minder.data.local.dao.MeasurementTypeDao
 import com.app.minder.data.local.entity.MeasurementTypeEntity
 
 object MeasurementTypeSeeder {
-    private val measurementTypes = listOf<MeasurementTypeEntity>(
+    private val measurementTypes = listOf(
         MeasurementTypeEntity(
             id = "blood_pressure_systolic",
             name = "Артериальное давление(верхнее)",

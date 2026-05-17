@@ -17,6 +17,7 @@ import com.app.minder.data.remote.Api
 import com.app.minder.data.remote.dto.DeviceTokenRequest
 import com.app.minder.data.remote.dto.Login
 import com.app.minder.data.remote.dto.Register
+import com.app.minder.domain.interfaces.AuthRepository
 import com.app.minder.domain.model.User
 import com.app.minder.domain.model.AuthResponse
 import com.app.minder.domain.model.AuthToken

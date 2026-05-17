@@ -1,6 +1,6 @@
-package com.app.minder.domain.usecase;
+package com.app.minder.domain.usecase
 
-import com.app.minder.data.repository.ProfileRepository;
+import com.app.minder.domain.interfaces.ProfileRepository
 
 class SwitchProfileUseCase(
         private val profileRep: ProfileRepository

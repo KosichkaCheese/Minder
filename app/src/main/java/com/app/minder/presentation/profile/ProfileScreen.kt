@@ -53,10 +53,6 @@ import com.app.minder.presentation.theme.TertiaryVariant
 import com.app.minder.presentation.theme.onMint
 import com.app.minder.presentation.theme.onTertiaryVariant
 
-data class LinkedUser(
-    val name: String,
-    val email: String
-)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,

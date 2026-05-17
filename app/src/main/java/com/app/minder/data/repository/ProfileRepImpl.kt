@@ -5,10 +5,10 @@ import com.app.minder.data.local.dao.ProfileDao
 import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.local.entity.ProfileEntity
 import com.app.minder.data.local.entity.toDomain
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.model.Profile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.UUID
 
 class ProfileRepImpl(
     val profileDao: ProfileDao,

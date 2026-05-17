@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.app.minder.data.remote.Api
 import com.app.minder.data.remote.dto.InvitationAcceptRequest
 import com.app.minder.data.remote.dto.UserResponse
-import com.app.minder.data.repository.AuthRepository
-import com.app.minder.data.repository.ProfileRepository
+import com.app.minder.domain.interfaces.AuthRepository
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.model.Profile
 import com.app.minder.domain.model.User
 import com.app.minder.domain.usecase.CreateProfileUseCase

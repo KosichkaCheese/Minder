@@ -440,15 +440,16 @@ fun MeasurementDetailScreen(
                                 viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note, measurementResult2.toDoubleOrNull() ?: return@SaveMeasurementPopup)
                                 showPopup = false
                            },
-                value1 = measurementResult.toString(),
-                value2 = measurementResult2.toString(),
+                value1 = measurementResult,
+                value2 = measurementResult2,
                 noteValue = note,
                 onValue1Change = { measurementResult = it },
                 onValue2Change = { measurementResult2 = it },
                 onNoteChange = { note = it },
                 unit = uiState.type?.unit ?: "",
                 type = MeasurementPopupType.TWO_FIELDS
-            );
+            )
+
             measurementTypeId == "mood" -> SaveMeasurementPopup(
                 backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
                 textColor = MaterialTheme.colorScheme.onSurface,
@@ -462,12 +463,13 @@ fun MeasurementDetailScreen(
                                 viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note)
                                 showPopup = false
                            },
-                value1 = measurementResult.toString(),
+                value1 = measurementResult,
                 noteValue = note,
                 onValue1Change = { measurementResult = it },
                 onNoteChange = { note = it },
                 type = MeasurementPopupType.SLIDER
-            );
+            )
+
             else -> SaveMeasurementPopup(
                 backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
                 textColor = MaterialTheme.colorScheme.onSurface,
@@ -481,13 +483,13 @@ fun MeasurementDetailScreen(
                     viewModel.saveMeasurement(measurementResult.toDoubleOrNull() ?: return@SaveMeasurementPopup, note)
                     showPopup = false
                 },
-                value1 = measurementResult.toString(),
+                value1 = measurementResult,
                 noteValue = note,
                 onValue1Change = { measurementResult = it },
                 onNoteChange = { note = it },
                 unit = uiState.type?.unit ?: "",
                 type = MeasurementPopupType.ONE_FIELD
-            );
+            )
         }
     }
 

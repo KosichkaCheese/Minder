@@ -1,8 +1,6 @@
-package com.app.minder.data.repository
+package com.app.minder.domain.interfaces
 
-import com.app.minder.data.local.entity.MedicationEntity
 import com.app.minder.data.local.entity.MedicationIntakeEntity
-import com.app.minder.data.local.entity.MedicationScheduleEntity
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.MedicationSchedule
 import com.app.minder.domain.model.TodayIntake

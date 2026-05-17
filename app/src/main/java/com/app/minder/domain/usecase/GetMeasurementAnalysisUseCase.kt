@@ -1,16 +1,14 @@
 package com.app.minder.domain.usecase
 
-import com.app.minder.data.repository.MeasurementRepository
+import com.app.minder.domain.interfaces.MeasurementRepository
 import com.app.minder.domain.model.BLOOD_PRESSURE_DIASTOLIC
 import com.app.minder.domain.model.BLOOD_PRESSURE_SYSTOLIC
 import com.app.minder.domain.model.Measurement
 import com.app.minder.domain.model.MeasurementAnalysis
-import com.app.minder.domain.model.MeasurementGoal
 import com.app.minder.domain.model.Trend
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 
 data class Metrics (
     val mean: Double? = null,

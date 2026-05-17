@@ -1,7 +1,6 @@
 package com.app.minder
 
 import android.app.AlarmManager
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -67,7 +66,7 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 showAlarmPermissionDialog.value = true
             }
@@ -88,8 +87,7 @@ class MainActivity : ComponentActivity() {
         val measurementRepository = MeasurementRepImpl(
             measurementDao = database.measurementDao(),
             measurementGoalDao = database.measurementGoalDao(),
-            measurementTypeDao = database.measurementTypeDao(),
-            database = database
+            measurementTypeDao = database.measurementTypeDao()
         )
         val notificationScheduler = NotificationScheduler(applicationContext, medicationRepository)
         val authRepository = AuthRepImpl(

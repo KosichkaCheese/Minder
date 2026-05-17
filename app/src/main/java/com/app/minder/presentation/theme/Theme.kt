@@ -21,7 +21,7 @@ fun MedTheme(
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = com.app.minder.presentation.theme.Typography,
+        typography = Typography,
         content = content
     )
 }

@@ -30,9 +30,9 @@ import com.app.minder.presentation.navigation.bottomNavItems
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.app.minder.data.repository.MeasurementRepository
-import com.app.minder.data.repository.MedicationRepository
-import com.app.minder.data.repository.ProfileRepository
+import com.app.minder.domain.interfaces.MeasurementRepository
+import com.app.minder.domain.interfaces.MedicationRepository
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.usecase.DeleteMedUseCase
 import com.app.minder.domain.usecase.GetCurrentProfileUseCase
 import com.app.minder.domain.usecase.GetMeasurementAnalysisUseCase
@@ -56,7 +56,6 @@ import com.app.minder.presentation.profile.ProfileViewModel
 import com.app.minder.presentation.theme.Mint
 import com.app.minder.presentation.theme.NavBar
 import com.app.minder.presentation.theme.onMint
-import com.app.minder.presentation.theme.onTertiaryVariant
 
 @Composable
 fun MainScreen(

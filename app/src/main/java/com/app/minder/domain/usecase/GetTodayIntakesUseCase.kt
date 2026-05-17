@@ -1,7 +1,7 @@
 package com.app.minder.domain.usecase
 
-import com.app.minder.data.repository.MedicationRepository
-import com.app.minder.data.repository.ProfileRepository
+import com.app.minder.domain.interfaces.MedicationRepository
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.model.TodayIntake
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest

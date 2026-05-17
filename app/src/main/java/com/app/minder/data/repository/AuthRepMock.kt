@@ -1,5 +1,6 @@
 package com.app.minder.data.repository
 
+import com.app.minder.domain.interfaces.AuthRepository
 import com.app.minder.domain.model.User
 import com.app.minder.domain.model.AuthResponse
 import com.app.minder.domain.model.AuthToken

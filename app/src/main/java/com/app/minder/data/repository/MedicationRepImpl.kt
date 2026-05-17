@@ -8,6 +8,7 @@ import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.local.entity.MedicationIntakeEntity
 import com.app.minder.data.local.entity.toDomain
 import com.app.minder.data.local.entity.toEntity
+import com.app.minder.domain.interfaces.MedicationRepository
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.MedicationSchedule
 import com.app.minder.domain.model.TodayIntake

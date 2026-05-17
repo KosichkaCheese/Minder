@@ -1,6 +1,6 @@
 package com.app.minder.domain.usecase
 
-import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.domain.interfaces.MedicationRepository
 import com.app.minder.util.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.first
 

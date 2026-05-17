@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.app.minder.presentation.components.MButton
 import com.app.minder.presentation.components.MSurface
 import com.app.minder.presentation.components.MTextField

@@ -1,13 +1,12 @@
 package com.app.minder.presentation.measurementDetail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.minder.data.local.entity.MeasurementEntity
 import com.app.minder.data.local.entity.MeasurementGoalEntity
 import com.app.minder.data.local.entity.toDomain
-import com.app.minder.data.repository.MeasurementRepository
-import com.app.minder.data.repository.ProfileRepository
+import com.app.minder.domain.interfaces.MeasurementRepository
+import com.app.minder.domain.interfaces.ProfileRepository
 import com.app.minder.domain.model.BLOOD_PRESSURE_DIASTOLIC
 import com.app.minder.domain.model.BLOOD_PRESSURE_SYSTOLIC
 import com.app.minder.domain.model.Measurement

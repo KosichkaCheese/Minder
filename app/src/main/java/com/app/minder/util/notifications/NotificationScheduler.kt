@@ -9,17 +9,12 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.app.minder.MainActivity
 import com.app.minder.R
-import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.domain.interfaces.MedicationRepository
 import com.app.minder.domain.model.MedicationSchedule
 import kotlinx.coroutines.flow.first
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 class NotificationScheduler(
     private val context: Context,

@@ -1,8 +1,7 @@
 package com.app.minder.domain.usecase
 
 import com.app.minder.data.local.entity.MeasurementEntity
-import com.app.minder.data.repository.MeasurementRepository
-import com.app.minder.domain.model.Measurement
+import com.app.minder.domain.interfaces.MeasurementRepository
 
 class SaveMeasurementUseCase(
     private val measurementRep: MeasurementRepository

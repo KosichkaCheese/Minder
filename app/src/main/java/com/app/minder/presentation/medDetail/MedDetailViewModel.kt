@@ -2,7 +2,7 @@ package com.app.minder.presentation.medDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.minder.data.repository.MedicationRepository
+import com.app.minder.domain.interfaces.MedicationRepository
 import com.app.minder.domain.model.MeasurementUnit
 import com.app.minder.domain.model.Medication
 import com.app.minder.domain.model.MedicationSchedule

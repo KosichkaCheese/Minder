@@ -59,7 +59,7 @@ class FCMService: FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, body: String) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE)
                 as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -3,12 +3,12 @@ package com.app.minder.data.repository
 import com.app.minder.data.local.dao.MeasurementDao
 import com.app.minder.data.local.dao.MeasurementGoalDao
 import com.app.minder.data.local.dao.MeasurementTypeDao
-import com.app.minder.data.local.database.MedDB
 import com.app.minder.data.local.entity.MeasurementEntity
 import com.app.minder.data.local.entity.MeasurementGoalEntity
 import com.app.minder.data.local.entity.MeasurementTypeEntity
 import com.app.minder.data.local.entity.toDomain
 import com.app.minder.data.local.entity.toEntity
+import com.app.minder.domain.interfaces.MeasurementRepository
 import com.app.minder.domain.model.Measurement
 import com.app.minder.domain.model.MeasurementGoal
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.map
 class MeasurementRepImpl(
     private val measurementGoalDao: MeasurementGoalDao,
     private val measurementDao: MeasurementDao,
-    private val measurementTypeDao: MeasurementTypeDao,
-    private val database: MedDB
+    private val measurementTypeDao: MeasurementTypeDao
 ): MeasurementRepository {
     override fun getMeasurementsTypeById(measurementTypeId: String): Flow<MeasurementTypeEntity?> {
         return measurementTypeDao.getMeasurementTypeById(measurementTypeId)
