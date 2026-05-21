@@ -241,14 +241,14 @@ fun ProfileScreen(
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Text(
-                                text = "Пациенты",
+                                text = "Наблюдаемые",
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 style = MaterialTheme.typography.titleLarge
                             )
 
                             if (uiState.patients.isEmpty()) {
                                 Text(
-                                    text = "Нет пациентов",
+                                    text = "Нет наблюдаемых",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.outline
                                 )
@@ -367,7 +367,7 @@ fun ProfileScreen(
                 submitColor = OnContainerError,
                 dismissColor = TertiaryVariant,
                 title = "Отвязать пользователя",
-                text = "Вы уверены, что хотите отвязать пациента ${user.name} (${user.email})? Вы перестанете" +
+                text = "Вы уверены, что хотите отвязать наблюдаемого пользователя ${user.name} (${user.email})? Вы перестанете" +
                         " получать уведомления о его пропусках лекарств.",
                 onSubmit = {
                     viewModel.removeLink(
