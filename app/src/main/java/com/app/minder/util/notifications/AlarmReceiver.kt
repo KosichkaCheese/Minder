@@ -33,7 +33,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
                 if (!isMedicationTaken(context, medicationId, timeMinutes)) {
                     showNotification(context, medicationId, medicationName, timeMinutes)
-                    scheduleMissedCheck(context, medicationId, medicationName, timeMinutes)
+                    scheduleMissedCheck(context, medicationId, timeMinutes)
                 }
                 scheduleNext(
                     context,
@@ -52,14 +52,12 @@ class AlarmReceiver: BroadcastReceiver() {
     private fun scheduleMissedCheck(
         context: Context,
         medicationId: String,
-        medicationName: String,
         timeMinutes: Int
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, MissedCheckReceiver::class.java).apply {
             putExtra("medicationId", medicationId)
-            putExtra("medicationName", medicationName)
             putExtra("timeMinutes", timeMinutes)
         }
 

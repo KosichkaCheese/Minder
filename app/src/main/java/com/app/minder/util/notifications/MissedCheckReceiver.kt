@@ -17,12 +17,11 @@ import java.util.Calendar
 class MissedCheckReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val medicationId = intent.getStringExtra("medicationId") ?: return
-        val medicationName = intent.getStringExtra("medicationName") ?: return
         val timeMinutes = intent.getIntExtra("timeMinutes", 0)
 
         CoroutineScope(Dispatchers.IO).launch {
             if (!isMedicationTaken(context, medicationId, timeMinutes)) {
-                notifyObservers(context, medicationName, timeMinutes)
+                notifyObservers(context, timeMinutes)
             }
         }
     }
@@ -59,7 +58,7 @@ class MissedCheckReceiver: BroadcastReceiver() {
         }
     }
 
-    private suspend fun notifyObservers(context: Context, medicationName: String, timeMinutes: Int) {
+    private suspend fun notifyObservers(context: Context, timeMinutes: Int) {
         try {
             val hours = timeMinutes / 60
             val minutes = timeMinutes % 60
@@ -67,10 +66,9 @@ class MissedCheckReceiver: BroadcastReceiver() {
 
             val api = Client.createApi(context.dataStore)
             api.notifyMissedIntake(MissedIntakeNotification(
-                medName = medicationName,
                 time = timeFormatted
             ))
-            Log.d("MissedCheck", "Observers notified: $medicationName")
+            Log.d("MissedCheck", "Observers notified")
         } catch (e: Exception) {
             Log.e("MissedCheck", "Failed: ${e.message}")
         }
