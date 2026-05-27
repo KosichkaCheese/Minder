@@ -61,6 +61,14 @@ fun AuthScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
+                uiState.error?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
                 MButton(
                     text = "Я подтвердил email",
                     onClick = {
