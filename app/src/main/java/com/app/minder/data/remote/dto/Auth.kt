@@ -27,3 +27,7 @@ data class UserResponse(
 data class RefreshRequest(
     val refreshToken: String
 )
+
+data class CheckEmailRequest(
+    val email: String
+)

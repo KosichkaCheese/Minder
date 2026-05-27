@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.firebase.messaging)
     implementation(libs.play.services.base)
+    implementation(libs.firebase.auth)
     ksp("androidx.room:room-compiler:2.8.4")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")

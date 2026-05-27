@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.app.minder.presentation.components.MButton
 import com.app.minder.presentation.components.MSurface
@@ -39,7 +40,11 @@ fun AuthScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = if (isLoginMode) "Вход" else "Регистрация",
+            text = when {
+                uiState.verificationSent -> "Подтверждение email"
+                isLoginMode -> "Вход"
+                else -> "Регистрация"
+            },
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 10.dp)
@@ -48,85 +53,122 @@ fun AuthScreen(
         MSurface(
             color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
-
-            // Имя (только для регистрации)
-            if (!isLoginMode) {
-                MTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                    label = "Имя пользователя",
-                    showClearButton = true,
-                    supportingText = "Это имя будут видеть другие пользователи",
+            if (uiState.verificationSent) {
+                Text(
+                    text = "Письмо отправлено на $email\nПроверьте почту и перейдите по ссылке",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
-            }
 
-            // Email
-            MTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "Email",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                showClearButton = true,
-            )
+                MButton(
+                    text = "Я подтвердил email",
+                    onClick = {
+                        viewModel.checkVerificationAndRegister(email, name, password, passwordConfirm)
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.background,
+                    isLoading = uiState.isLoading
+                )
 
-            // Пароль
-            MTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = "Пароль",
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                showClearButton = true,
-            )
+                MButton(
+                    text = "Отправить повторно",
+                    onClick = {
+                        viewModel.sendVerification(email, password)
+                    },
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
 
-            // Подтверждение пароля
-            if (!isLoginMode) {
+                MButton(
+                    text = "Назад",
+                    onClick = {
+                        viewModel.cancelVerification()
+                    },
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            } else {
+
+                // Имя (только для регистрации)
+                if (!isLoginMode) {
+                    MTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        label = "Имя пользователя",
+                        showClearButton = true,
+                        supportingText = "Это имя будут видеть другие пользователи",
+                    )
+                }
+
+                // Email
                 MTextField(
-                    value = passwordConfirm,
-                    onValueChange = { passwordConfirm = it },
-                    label = "Повторите пароль",
+                    value = email,
+                    onValueChange = { email = it },
+                    label = "Email",
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    showClearButton = true,
+                )
+
+                // Пароль
+                MTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = "Пароль",
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     showClearButton = true,
                 )
-            }
 
-            // Ошибка
-            uiState.error?.let { error ->
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.error
+                // Подтверждение пароля
+                if (!isLoginMode) {
+                    MTextField(
+                        value = passwordConfirm,
+                        onValueChange = { passwordConfirm = it },
+                        label = "Повторите пароль",
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        showClearButton = true,
+                    )
+                }
+
+                // Ошибка
+                uiState.error?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                // Кнопка входа/регистрации
+                MButton(
+                    onClick = {
+                        if (isLoginMode) {
+                            viewModel.login(email, password)
+                        } else {
+                            viewModel.sendVerification(email, password)
+                        }
+                    },
+                    modifier = Modifier.padding(top = 20.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.background,
+                    isLoading = uiState.isLoading,
+                    text = if (isLoginMode) "Войти" else "Зарегистрироваться"
+                )
+
+                // Переключение между входом и регистрацией
+                MButton(
+                    onClick = {
+                        isLoginMode = !isLoginMode
+                        viewModel.clearError()
+                    },
+                    text = if (isLoginMode) "Зарегистрироваться" else "Войти",
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+
                 )
             }
-
-            // Кнопка входа/регистрации
-            MButton(
-                onClick = {
-                    if (isLoginMode) {
-                        viewModel.login(email, password)
-                    } else {
-                        viewModel.register(email, name, password, passwordConfirm)
-                    }
-                },
-                modifier = Modifier.padding(top = 20.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.background,
-                isLoading = uiState.isLoading,
-                text = if (isLoginMode) "Войти" else "Зарегистрироваться"
-            )
-
-            // Переключение между входом и регистрацией
-            MButton(
-                onClick = {
-                    isLoginMode = !isLoginMode
-                    viewModel.clearError()
-                },
-                text = if (isLoginMode) "Зарегистрироваться" else "Войти",
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = MaterialTheme.colorScheme.primary
-
-            )
         }
     }
 }

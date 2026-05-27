@@ -175,7 +175,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     startDestination?.let { destination ->
-                        val authViewModel = AuthViewModel(loginUseCase, registerUseCase)
+                        val authViewModel = AuthViewModel(loginUseCase, registerUseCase, api)
                         val homeViewModel = HomeViewModel(getTodayIntakesUseCase)
                         val medListViewModel = MedListViewModel(getMedsUseCase)
                         val profileViewModel = ProfileViewModel(

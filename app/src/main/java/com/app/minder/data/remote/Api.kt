@@ -1,4 +1,5 @@
 package com.app.minder.data.remote
+import com.app.minder.data.remote.dto.CheckEmailRequest
 import com.app.minder.data.remote.dto.DeviceTokenRequest
 import com.app.minder.data.remote.dto.InvitationAcceptRequest
 import com.app.minder.data.remote.dto.InviteObserverResponse
@@ -44,4 +45,7 @@ interface Api {
 
     @DELETE("observe/link/{patient_id}/{observer_id}")
     suspend fun removeObserver(@Path("patient_id") patientId: String, @Path("observer_id") observerId: String): Map<String, String>
+
+    @POST("auth/check-email")
+    suspend fun checkEmail(@Body request: CheckEmailRequest): Map<String, String>
 }
