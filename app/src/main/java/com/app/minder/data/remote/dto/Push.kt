@@ -5,6 +5,5 @@ data class DeviceTokenRequest(
 )
 
 data class MissedIntakeNotification(
-    val medName: String,
     val time: String
 )
