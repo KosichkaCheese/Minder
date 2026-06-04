@@ -55,7 +55,7 @@ fun AuthScreen(
         ) {
             if (uiState.verificationSent) {
                 Text(
-                    text = "Письмо отправлено на $email\nПроверьте почту и перейдите по ссылке",
+                    text = "Письмо отправлено на $email\nПроверьте почту и перейдите по ссылке.\nЕсли не можете найти письмо, проверьте папку \"Спам\"",
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
