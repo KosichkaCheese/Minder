@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Client {
-    private const val BASE_URL = "http://192.168.1.131:8000/"
+    private const val BASE_URL = "http://188.17.152.49:20072/"
 
     fun createApi(dataStore: DataStore<Preferences>): Api {
         val client = OkHttpClient.Builder()
